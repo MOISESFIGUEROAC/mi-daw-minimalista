@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAW Minimalista</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Incluimos la librería Tone.js desde un CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+</head>
+<body>
+
+    <div id="app-container">
+        <header>
+            <h1>NOMBRE PÁGINA</h1>
+        </header>
+
+        <main class="daw-layout">
+            <!-- Panel Izquierdo: Loops -->
+            <aside id="loops-panel">
+                <h2>LOOPS</h2>
+                <div class="bpm-display">
+                    <input type="number" id="bpm-input" value="120"> bpm
+                </div>
+                <div class="item-list" id="loop-list">
+                    <!-- Los loops se añadirán aquí. El atributo data-src es la URL del audio. -->
+                    <div class="draggable-item loop-item" draggable="true" data-src="https://tonejs.github.io/audio/drum-samples/loops/drums.mp3" data-name="Batería 1">Batería 1</div>
+                    <div class="draggable-item loop-item" draggable="true" data-src="https://tonejs.github.io/audio/berklee/gong_1.mp3" data-name="Gong Loop">Gong Loop</div>
+                    <div class="draggable-item loop-item" draggable="true" data-src="https://tonejs.github.io/audio/salamander/A2.mp3" data-name="Piano A2 Loop">Piano A2 Loop</div>
+                </div>
+            </aside>
+
+            <!-- Área Central: Workspace -->
+            <section id="main-workspace">
+                <div id="song-structure">
+                    <!-- Las etiquetas de estructura de la canción -->
+                    <div class="structure-tag">intro</div>
+                    <div class="structure-tag">verso</div>
+                    <div class="structure-tag">precoro</div>
+                    <div class="structure-tag">puente</div>
+                    <div class="structure-tag">salida/final</div>
+                </div>
+
+                <div id="timeline">
+                    <!-- Las pistas serán los destinos para soltar los elementos -->
+                    <div class="track" id="track-1" data-track-id="1">
+                        <div class="track-label">Pista 1</div>
+                    </div>
+                    <div class="track" id="track-2" data-track-id="2">
+                        <div class="track-label">Pista 2</div>
+                    </div>
+                    <div class="track" id="track-3" data-track-id="3">
+                        <div class="track-label">Pista 3</div>
+                    </div>
+                </div>
+                
+                <div id="transport-controls">
+                    <button id="play-button">▶</button>
+                    <div id="metronome">
+                        <div id="metro-light"></div>
+                    </div>
+                    <div id="time-display">0:0:0</div>
+                     <button id="export-button">Exportar (WIP)</button>
+                </div>
+            </section>
+
+            <!-- Panel Derecho: Samples -->
+            <aside id="samples-panel">
+                <h2>SAMPLES</h2>
+                <div class="item-list" id="sample-list">
+                    <div class="draggable-item sample-item" draggable="true" data-src="https://tonejs.github.io/audio/drum-samples/B_hihat.mp3" data-name="Hi-Hat">Hi-Hat</div>
+                    <div class="draggable-item sample-item" draggable="true" data-src="https://tonejs.github.io/audio/drum-samples/C_kick.mp3" data-name="Kick">Kick</div>
+                    <div class="draggable-item sample-item" draggable="true" data-src="https://tonejs.github.io/audio/drum-samples/D_snare.mp3" data-name="Snare">Snare</div>
+                </div>
+            </aside>
+        </main>
+    </div>
+    
+    <!-- Modal para iniciar el audio (requerido por los navegadores) -->
+    <div id="start-modal">
+        <button id="start-button">Iniciar DAW</button>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
