@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DAW v2.0 - Rediseño Completo</title>
+    <title>DAW v3.0 - Arreglador Interactivo</title>
+    <!-- Tone.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <!-- SortableJS para arrastrar secciones -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    
     <style>
         /* CSS completo para la nueva interfaz */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
@@ -17,32 +21,32 @@
         #samples-panel{background-color:var(--color-purple);}
         aside h2{margin:0 0 1rem 0;text-align:center;}
         .controls-row{display:flex;justify-content:space-between;align-items:center;background-color:rgba(0,0,0,0.5);padding:0.5rem 1rem;border-radius:20px;margin-bottom:1rem;}
-        .bpm-display, .time-signature-display{display:flex;align-items:center;gap:0.5rem;}
         #bpm-input{width:50px;background:transparent;border:none;color:var(--color-text);font-size:1.2rem;font-weight:bold;text-align:right;}
         #time-signature{background:transparent;border:1px solid #777;color:white;border-radius:4px;}
-        #bpm-input[type=number]{-moz-appearance:textfield;}
         .item-list{flex-grow:1;overflow-y:auto;padding-right:10px;}
         .draggable-item{background-color:rgba(255,255,255,0.2);padding:0.8rem;margin-bottom:0.5rem;border-radius:8px;cursor:grab;transition:background-color 0.2s ease;user-select:none;}
         .draggable-item:hover{background-color:rgba(255,255,255,0.4);}
         #main-workspace{display:flex;flex-direction:column;gap:1rem;background-color:#000;border-radius:12px;padding:1rem;overflow:hidden;}
         #timeline-container{position:relative;flex-grow:1;overflow-x:auto;overflow-y:hidden;}
-        #arrangement-view{display:flex;flex-direction:row;min-height:100%;}
-        .section{border:1px solid #555;border-radius:8px;padding:0.5rem;display:flex;flex-direction:column;gap:0.5rem;background:rgba(255,255,255,0.02);}
-        .section-header{text-align:center;font-weight:bold;color:#aaa;padding-bottom:0.5rem;border-bottom:1px solid #444;}
-        .track{background-color:rgba(255,255,255,0.05);border-radius:8px;height:80px;position:relative;background-image:linear-gradient(90deg,var(--color-grid) 1px,transparent 1px);background-size:var(--pixels-per-beat) 100%;}
+        #arrangement-view{display:flex;flex-direction:row;min-height:100%;width:max-content;}
+        .section{border:1px solid #555;border-radius:8px;padding:0.5rem;display:flex;flex-direction:column;gap:0.5rem;background:rgba(255,255,255,0.02);margin-right:0.5rem;}
+        .section-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:0.5rem;border-bottom:1px solid #444;cursor:move;}
+        .section-name{font-weight:bold;color:#aaa;}
+        .section-controls button{background:none;border:none;color:#888;cursor:pointer;font-size:1rem;}
+        .section-controls button:hover{color:white;}
+        .track{background-color:rgba(255,255,255,0.05);border-radius:8px;height:80px;position:relative;background-image:linear-gradient(90deg,var(--color-grid) 1px,transparent 1px);background-size:var(--pixels-per-beat) 100%;overflow:hidden;}
         .track.drag-over{border:2px dashed var(--color-green);}
-        .clip{position:absolute;height:60px;top:10px;border-radius:8px;display:flex;align-items:center;justify-content:space-between;padding:0 1rem;box-sizing:border-box;color:white;font-weight:bold;cursor:move;z-index:10;}
+        .clip{position:absolute;height:60px;top:10px;border-radius:8px;display:flex;align-items:center;padding:0 1rem;box-sizing:border-box;color:white;font-weight:bold;cursor:move;z-index:10;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
         .clip.loop-clip{background-color:var(--color-green);}
         .clip.sample-clip{background-color:var(--color-orange);}
-        .clip-repeat-input{width:40px;background:rgba(0,0,0,0.5);color:white;border:1px solid #fff;border-radius:4px;text-align:center;font-weight:bold;}
-        #playhead{position:absolute;top:0;left:0;width:2px;height:100%;background-color:red;z-index:20;pointer-events:none;}
+        #playhead{position:absolute;top:0;left:0;width:2px;height:100%;background-color:red;z-index:20;pointer-events:none;transition:transform 0.05s linear;}
         #transport-controls{display:flex;justify-content:center;align-items:center;gap:1.5rem;padding:0.5rem;background:#222;border-radius:8px;}
-        #play-button, #add-section-btn, #click-toggle{border:none;color:white;height:50px;border-radius:50%;font-size:1.5rem;cursor:pointer;transition:background-color 0.2s;}
-        #play-button{width:50px;background-color:var(--color-magenta);}
-        #add-section-btn{width:50px;background-color:#555;}
-        #click-toggle{width:50px;background-color:#555;font-size:1rem;}
+        #transport-controls button{border:none;color:white;height:50px;width:50px;border-radius:50%;font-size:1.5rem;cursor:pointer;transition:background-color 0.2s;}
+        #play-button{background-color:var(--color-magenta);}
+        #add-section-btn{background-color:#555;}
+        #click-toggle{background-color:#555;font-size:1rem;}
         #click-toggle.active{background-color:var(--color-orange);}
-        #time-display{font-size:1.2rem;font-variant-numeric:tabular-nums;}
+        #time-display{font-size:1.2rem;font-variant-numeric:tabular-nums;min-width:70px;}
         #start-modal{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.8);display:flex;justify-content:center;align-items:center;z-index:1000;}
         #start-button{padding:1rem 2rem;font-size:1.5rem;background-color:var(--color-magenta);color:white;border:none;border-radius:8px;cursor:pointer;}
     </style>
@@ -50,44 +54,34 @@
 <body>
 
     <div id="app-container">
-        <header><h1>DAW v2.0</h1></header>
+        <header><h1>DAW v3.0</h1></header>
 
         <main class="daw-layout">
             <aside id="loops-panel">
                 <h2>LOOPS</h2>
                 <div class="controls-row">
                     <div class="bpm-display"><input type="number" id="bpm-input" value="120">bpm</div>
-                    <div class="time-signature-display">
-                        <select id="time-signature"><option value="4/4" selected>4/4</option><option value="3/4">3/4</option><option value="6/8">6/8</option></select>
-                    </div>
+                    <select id="time-signature"><option value="4" selected>4/4</option><option value="3">3/4</option><option value="6">6/8</option></select>
                 </div>
                 <div class="item-list" id="loop-list">
                     <div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_120_Perc.mp3" data-name="Perc (120bpm)">Perc (120bpm)</div>
-                    <div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_120_Tops.mp3" data-name="Tops (120bpm)">Tops (120bpm)</div>
                 </div>
             </aside>
 
             <section id="main-workspace">
                 <div id="timeline-container">
                     <div id="playhead"></div>
-                    <div id="arrangement-view">
-                        <!-- Las secciones se añadirán aquí dinámicamente -->
-                    </div>
+                    <div id="arrangement-view"> <!-- SortableJS actuará aquí --> </div>
                 </div>
                 <div id="transport-controls">
                     <button id="add-section-btn" title="Añadir Sección">+</button>
-                    <button id="click-toggle" title="Activar/Desactivar Metrónomo">Click</button>
+                    <button id="click-toggle" title="Metrónomo">Click</button>
                     <button id="play-button" title="Reproducir/Detener">▶</button>
                     <div id="time-display">0:0:0</div>
                 </div>
             </section>
 
-            <aside id="samples-panel">
-                <h2>SAMPLES</h2>
-                <div class="item-list" id="sample-list">
-                     <div class="draggable-item sample-item" draggable="true" data-src="https://tonejs.github.io/audio/drum-samples/C_kick.mp3" data-name="Kick">Kick</div>
-                </div>
-            </aside>
+            <aside id="samples-panel"><h2>SAMPLES</h2></aside>
         </main>
     </div>
     
@@ -97,7 +91,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         // --- ELEMENTOS DEL DOM ---
         const startModal = document.getElementById('start-modal');
-        const startButton = document.getElementById('start-button');
         const playButton = document.getElementById('play-button');
         const bpmInput = document.getElementById('bpm-input');
         const timeSignatureSelect = document.getElementById('time-signature');
@@ -108,21 +101,20 @@
         const addSectionBtn = document.getElementById('add-section-btn');
         const playhead = document.getElementById('playhead');
 
-        // --- CONFIGURACIÓN Y ESTADO GLOBAL ---
+        // --- ESTADO Y CONFIGURACIÓN ---
         let isPlaying = false;
         let isClickEnabled = false;
-        const audioPlayers = {};
+        const audioData = { clips: {}, players: {} };
         let draggedElement = null;
-        const pixelsPerBeat = 60; // Aumentado para más espacio
-        let sectionCounter = 0;
-        let sections = {}; // { sectionId: { element, startBeats, totalBeats, ... } }
+        const pixelsPerBeat = 60;
+        let sectionIdCounter = 0;
 
-        // --- INICIALIZACIÓN DE AUDIO (SYNTHS Y PLAYERS) ---
+        // --- INICIALIZACIÓN DE AUDIO ---
         const previewPlayer = new Tone.Player().toDestination();
-        const highClick = new Tone.MembraneSynth({ pitchDecay: 0.01, octaves: 10, oscillator: { type: 'square' }, envelope: { attack: 0.001, decay: 0.3, sustain: 0.01, release: 0.2 } }).toDestination();
-        const lowClick = new Tone.MembraneSynth({ pitchDecay: 0.01, octaves: 4, oscillator: { type: 'sine' }, envelope: { attack: 0.001, decay: 0.3, sustain: 0.01, release: 0.2 } }).toDestination();
+        const highClick = new Tone.MembraneSynth().toDestination();
+        const lowClick = new Tone.MembraneSynth({ octaves: 4 }).toDestination();
 
-        startButton.addEventListener('click', async () => {
+        startModal.addEventListener('click', async () => {
             await Tone.start();
             initializeDAW();
             startModal.style.display = 'none';
@@ -131,54 +123,81 @@
         function initializeDAW() {
             Tone.Transport.bpm.value = parseInt(bpmInput.value);
             updateTimeSignature();
-            Tone.Transport.scheduleRepeat(onBeat, '8n');
-            requestAnimationFrame(updateUI); // Bucle principal de actualización de UI
+            Tone.Transport.scheduleRepeat(onBeat, '4n');
+            requestAnimationFrame(updateUI);
             
             // Crear secciones iniciales
             addSection('Intro');
             addSection('Verso');
             addSection('Coro');
             addSection('Outro');
+            
+            // Activar SortableJS para reordenar secciones
+            new Sortable(arrangementView, {
+                animation: 150,
+                handle: '.section-header',
+                onEnd: () => {
+                    recalculateAllSchedules();
+                }
+            });
         }
         
-        // --- LÓGICA DEL ARREGLADOR DE SECCIONES ---
-        function addSection(type = 'Sección') {
-            sectionCounter++;
-            const sectionId = `section-${sectionCounter}`;
-            const beatsPerSection = 16; // 4 compases de 4/4 por defecto
-
+        // --- GESTIÓN DE SECCIONES ---
+        function addSection(name = 'Sección', beats = 16) {
+            sectionIdCounter++;
+            const sectionId = `section-${sectionIdCounter}`;
             const sectionEl = document.createElement('div');
             sectionEl.className = 'section';
             sectionEl.id = sectionId;
-            sectionEl.style.width = `${beatsPerSection * pixelsPerBeat}px`;
+            sectionEl.style.width = `${beats * pixelsPerBeat}px`;
+            sectionEl.dataset.beats = beats;
+            sectionEl.dataset.name = name;
+
             sectionEl.innerHTML = `
-                <div class="section-header">${type}</div>
+                <div class="section-header">
+                    <span class="section-name">${name}</span>
+                    <div class="section-controls">
+                        <button class="duplicate-btn" title="Duplicar Sección">📄</button>
+                        <button class="delete-btn" title="Eliminar Sección">🗑️</button>
+                    </div>
+                </div>
                 <div class="track" data-track-id="1"></div>
                 <div class="track" data-track-id="2"></div>
                 <div class="track" data-track-id="3"></div>
             `;
             arrangementView.appendChild(sectionEl);
+
+            sectionEl.querySelector('.delete-btn').addEventListener('click', () => deleteSection(sectionId));
+            sectionEl.querySelector('.duplicate-btn').addEventListener('click', () => duplicateSection(sectionId));
+        }
+        
+        function deleteSection(sectionId) {
+            document.getElementById(sectionId)?.remove();
+            recalculateAllSchedules();
+        }
+
+        function duplicateSection(sectionId) {
+            const originalSection = document.getElementById(sectionId);
+            const newSection = originalSection.cloneNode(true); // Clonar con hijos
             
-            // Almacenar información de la sección
-            sections[sectionId] = {
-                element: sectionEl,
-                totalBeats: beatsPerSection,
-                startBeats: 0 // Se calculará después
-            };
-            updateSectionStartTimes();
+            sectionIdCounter++;
+            const newSectionId = `section-${sectionIdCounter}`;
+            newSection.id = newSectionId;
+            
+            // Re-asignar IDs y eventos a los clones
+            newSection.querySelector('.delete-btn').addEventListener('click', () => deleteSection(newSectionId));
+            newSection.querySelector('.duplicate-btn').addEventListener('click', () => duplicateSection(newSectionId));
+            
+            originalSection.after(newSection);
+            recalculateAllSchedules();
         }
 
-        function updateSectionStartTimes() {
-            let currentBeats = 0;
-            document.querySelectorAll('.section').forEach(sectionEl => {
-                const sectionId = sectionEl.id;
-                sections[sectionId].startBeats = currentBeats;
-                currentBeats += sections[sectionId].totalBeats;
-            });
-        }
-        addSectionBtn.addEventListener('click', () => addSection());
+        addSectionBtn.addEventListener('click', () => {
+            const name = prompt("Nombre de la nueva sección:", "Coro 2");
+            if (name) addSection(name);
+        });
 
-        // --- CONTROLES DE TRANSPORTE Y METRÓNOMO ---
+        // --- CONTROLES DE TRANSPORTE ---
         playButton.addEventListener('click', () => {
             isPlaying = !isPlaying;
             playButton.textContent = isPlaying ? '■' : '▶';
@@ -193,19 +212,17 @@
         bpmInput.addEventListener('change', e => { Tone.Transport.bpm.value = parseInt(e.target.value); });
         timeSignatureSelect.addEventListener('change', updateTimeSignature);
         function updateTimeSignature() {
-            const [num] = timeSignatureSelect.value.split('/').map(Number);
-            Tone.Transport.timeSignature = num;
+            Tone.Transport.timeSignature = parseInt(timeSignatureSelect.value);
         }
 
         function onBeat(time) {
-            const [bar, beat, subdivision] = Tone.Transport.position.split(':').map(Number);
-            if (isClickEnabled && subdivision === 0) {
-                if (beat === 0) highClick.triggerAttackRelease('C2', '8n', time);
-                else lowClick.triggerAttackRelease('C2', '8n', time);
+            if (isClickEnabled) {
+                const beat = Tone.Transport.getTicksAtTime(time) / Tone.Transport.PPQ % Tone.Transport.timeSignature;
+                if (beat === 0) highClick.triggerAttackRelease('C5', '8n', time);
+                else lowClick.triggerAttackRelease('C4', '8n', time);
             }
         }
         
-        // --- BUCLE PRINCIPAL DE ACTUALIZACIÓN DE UI ---
         function updateUI() {
             if (isPlaying) {
                 timeDisplay.textContent = Tone.Transport.position.split('.')[0];
@@ -215,20 +232,18 @@
             requestAnimationFrame(updateUI);
         }
 
-        // --- LÓGICA DE VISTA PREVIA ---
+        // --- DRAG & DROP Y GESTIÓN DE CLIPS ---
         loopList.addEventListener('click', e => {
             if (e.target.classList.contains('draggable-item')) {
-                if (previewPlayer.state === 'started') previewPlayer.stop();
                 previewPlayer.load(e.target.dataset.src).then(() => previewPlayer.start());
             }
         });
-
-        // --- LÓGICA DE DRAG & DROP ---
         document.body.addEventListener('dragstart', e => { draggedElement = e.target; });
+
         arrangementView.addEventListener('dragover', e => {
             e.preventDefault();
             const targetTrack = e.target.closest('.track');
-            if (targetTrack) {
+            if(targetTrack) {
                 document.querySelectorAll('.track.drag-over').forEach(t => t.classList.remove('drag-over'));
                 targetTrack.classList.add('drag-over');
             }
@@ -240,73 +255,71 @@
             if (!draggedElement || !targetTrack) return;
             
             targetTrack.classList.remove('drag-over');
-            const targetSectionEl = targetTrack.closest('.section');
-            const sectionId = targetSectionEl.id;
-            const sectionInfo = sections[sectionId];
+            const beatInTrack = Math.floor((e.clientX - targetTrack.getBoundingClientRect().left) / pixelsPerBeat);
             
-            const trackRect = targetTrack.getBoundingClientRect();
-            const sectionRect = targetSectionEl.getBoundingClientRect();
-            const dropX = e.clientX - trackRect.left;
-            
-            const beatInTrack = Math.floor(dropX / pixelsPerBeat);
-            const snappedX = beatInTrack * pixelsPerBeat;
-            
-            const totalStartBeats = sectionInfo.startBeats + beatInTrack;
-            const bar = Math.floor(totalStartBeats / Tone.Transport.timeSignature);
-            const beat = totalStartBeats % Tone.Transport.timeSignature;
-            const startTime = `${bar}:${beat}:0`;
-
-            if (draggedElement.classList.contains('clip')) {
-                // Mover clip es más complejo en esta arquitectura, por ahora se crea uno nuevo
-                console.warn("Mover clips no está implementado en esta versión.");
-            } else if (draggedElement.classList.contains('draggable-item')) {
-                createClip(draggedElement, targetTrack, snappedX, startTime);
-            }
+            createClip(draggedElement, targetTrack, beatInTrack);
+            recalculateAllSchedules();
         });
 
-        // --- FUNCIONES DE MANEJO DE CLIPS ---
-        function createClip(sourceItem, targetTrack, positionX, startTime) {
+        function createClip(sourceItem, targetTrack, startBeatInTrack) {
             const clipId = `clip-${Date.now()}`;
             const clipElement = document.createElement('div');
             clipElement.id = clipId;
             clipElement.className = 'clip';
             clipElement.draggable = true;
-            clipElement.style.left = `${positionX}px`;
+            clipElement.style.left = `${startBeatInTrack * pixelsPerBeat}px`;
             clipElement.textContent = sourceItem.dataset.name;
-            
-            const isLoop = sourceItem.classList.contains('loop-item');
-            clipElement.classList.add(isLoop ? 'loop-clip' : 'sample-clip');
+            clipElement.classList.add(sourceItem.classList.contains('loop-item') ? 'loop-clip' : 'sample-clip');
             
             targetTrack.appendChild(clipElement);
-
-            const player = new Tone.Player(sourceItem.dataset.src, () => {
-                const durationBeats = player.buffer.duration / Tone.Time('4n').toSeconds();
-                clipElement.style.width = `${durationBeats * pixelsPerBeat}px`;
-                scheduleAudio(clipId, player, startTime, isLoop);
-            }).toDestination();
             
-            audioPlayers[clipId] = { player, element: clipElement, schedule: null };
+            audioData.clips[clipId] = {
+                element: clipElement,
+                src: sourceItem.dataset.src,
+                startBeatInTrack,
+                track: targetTrack,
+            };
             
-            clipElement.addEventListener('dblclick', () => deleteClip(clipId));
+            clipElement.addEventListener('dblclick', () => {
+                delete audioData.clips[clipId];
+                clipElement.remove();
+                recalculateAllSchedules();
+            });
         }
         
-        function deleteClip(clipId) {
-            const clipData = audioPlayers[clipId];
-            if (!clipData) return;
-            if (clipData.schedule) clipData.schedule.dispose();
-            clipData.player.dispose();
-            clipData.element.remove();
-            delete audioPlayers[clipId];
-        }
+        function recalculateAllSchedules() {
+            // 1. Limpiar todo el transporte
+            Tone.Transport.cancel(0);
+            Tone.Transport.scheduleRepeat(onBeat, '4n'); // Re-programar el metrónomo
 
-        function scheduleAudio(clipId, player, startTime, isLoop) {
-             const loop = new Tone.Loop(time => {
-                if (player.loaded) player.start(time);
-            }, player.buffer.duration);
-            
-            if (!isLoop) loop.iterations = 1;
-            loop.start(startTime);
-            audioPlayers[clipId].schedule = loop;
+            // 2. Limpiar players antiguos
+            Object.values(audioData.players).forEach(p => p.dispose());
+            audioData.players = {};
+
+            // 3. Recalcular y re-programar cada clip
+            let totalBeatsOffset = 0;
+            document.querySelectorAll('.section').forEach(sectionEl => {
+                const sectionBeats = parseInt(sectionEl.dataset.beats);
+                sectionEl.querySelectorAll('.clip').forEach(clipEl => {
+                    const clipId = clipEl.id;
+                    const clipInfo = audioData.clips[clipId];
+                    if (!clipInfo) return;
+
+                    const clipStartBeat = totalBeatsOffset + clipInfo.startBeatInTrack;
+                    const bar = Math.floor(clipStartBeat / Tone.Transport.timeSignature);
+                    const beat = clipStartBeat % Tone.Transport.timeSignature;
+                    const startTime = `${bar}:${beat}:0`;
+                    
+                    const player = new Tone.Player(clipInfo.src, () => {
+                         const durationBeats = player.buffer.duration / Tone.Time('4n').toSeconds();
+                         clipInfo.element.style.width = `${durationBeats * pixelsPerBeat}px`;
+                    }).toDestination();
+                    
+                    audioData.players[clipId] = player;
+                    const loop = new Tone.Loop(time => player.start(time), player.buffer.duration).start(startTime);
+                });
+                totalBeatsOffset += sectionBeats;
+            });
         }
     });
     </script>
