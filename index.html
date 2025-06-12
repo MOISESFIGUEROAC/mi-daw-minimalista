@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DAW v3.0 - Arreglador Interactivo</title>
+    <title>DAW v3.1 - Arreglador Estable</title>
     <!-- Tone.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <!-- SortableJS para arrastrar secciones -->
@@ -52,44 +52,16 @@
     </style>
 </head>
 <body>
-
-    <div id="app-container">
-        <header><h1>DAW v3.0</h1></header>
-
+    <div id="app-container"><header><h1>DAW v3.1</h1></header>
         <main class="daw-layout">
-            <aside id="loops-panel">
-                <h2>LOOPS</h2>
-                <div class="controls-row">
-                    <div class="bpm-display"><input type="number" id="bpm-input" value="120">bpm</div>
-                    <select id="time-signature"><option value="4" selected>4/4</option><option value="3">3/4</option><option value="6">6/8</option></select>
-                </div>
-                <div class="item-list" id="loop-list">
-                    <div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_120_Perc.mp3" data-name="Perc (120bpm)">Perc (120bpm)</div>
-                </div>
-            </aside>
-
-            <section id="main-workspace">
-                <div id="timeline-container">
-                    <div id="playhead"></div>
-                    <div id="arrangement-view"> <!-- SortableJS actuará aquí --> </div>
-                </div>
-                <div id="transport-controls">
-                    <button id="add-section-btn" title="Añadir Sección">+</button>
-                    <button id="click-toggle" title="Metrónomo">Click</button>
-                    <button id="play-button" title="Reproducir/Detener">▶</button>
-                    <div id="time-display">0:0:0</div>
-                </div>
-            </section>
-
+            <aside id="loops-panel"><h2>LOOPS</h2><div class="controls-row"><div><input type="number" id="bpm-input" value="120">bpm</div><select id="time-signature"><option value="4" selected>4/4</option><option value="3">3/4</option><option value="6">6/8</option></select></div><div class="item-list" id="loop-list"><div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_120_Perc.mp3" data-name="Perc (120bpm)">Perc (120bpm)</div><div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_120_Tops.mp3" data-name="Tops (120bpm)">Tops (120bpm)</div></div></aside>
+            <section id="main-workspace"><div id="timeline-container"><div id="playhead"></div><div id="arrangement-view"></div></div><div id="transport-controls"><button id="add-section-btn" title="Añadir Sección">+</button><button id="click-toggle" title="Metrónomo">Click</button><button id="play-button" title="Reproducir/Detener">▶</button><div id="time-display">0:0:0</div></div></section>
             <aside id="samples-panel"><h2>SAMPLES</h2></aside>
         </main>
     </div>
-    
     <div id="start-modal"><button id="start-button">Iniciar DAW</button></div>
-
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- ELEMENTOS DEL DOM ---
         const startModal = document.getElementById('start-modal');
         const playButton = document.getElementById('play-button');
         const bpmInput = document.getElementById('bpm-input');
@@ -101,7 +73,6 @@
         const addSectionBtn = document.getElementById('add-section-btn');
         const playhead = document.getElementById('playhead');
 
-        // --- ESTADO Y CONFIGURACIÓN ---
         let isPlaying = false;
         let isClickEnabled = false;
         const audioData = { clips: {}, players: {} };
@@ -109,7 +80,6 @@
         const pixelsPerBeat = 60;
         let sectionIdCounter = 0;
 
-        // --- INICIALIZACIÓN DE AUDIO ---
         const previewPlayer = new Tone.Player().toDestination();
         const highClick = new Tone.MembraneSynth().toDestination();
         const lowClick = new Tone.MembraneSynth({ octaves: 4 }).toDestination();
@@ -123,27 +93,18 @@
         function initializeDAW() {
             Tone.Transport.bpm.value = parseInt(bpmInput.value);
             updateTimeSignature();
-            Tone.Transport.scheduleRepeat(onBeat, '4n');
             requestAnimationFrame(updateUI);
             
-            // Crear secciones iniciales
             addSection('Intro');
             addSection('Verso');
             addSection('Coro');
             addSection('Outro');
             
-            // Activar SortableJS para reordenar secciones
-            new Sortable(arrangementView, {
-                animation: 150,
-                handle: '.section-header',
-                onEnd: () => {
-                    recalculateAllSchedules();
-                }
-            });
+            new Sortable(arrangementView, { animation: 150, handle: '.section-header', onEnd: recalculateAllSchedules });
+            recalculateAllSchedules(); // Initial calculation
         }
         
-        // --- GESTIÓN DE SECCIONES ---
-        function addSection(name = 'Sección', beats = 16) {
+        function addSection(name = 'Sección', beats = 16, afterElement = null) {
             sectionIdCounter++;
             const sectionId = `section-${sectionIdCounter}`;
             const sectionEl = document.createElement('div');
@@ -153,22 +114,14 @@
             sectionEl.dataset.beats = beats;
             sectionEl.dataset.name = name;
 
-            sectionEl.innerHTML = `
-                <div class="section-header">
-                    <span class="section-name">${name}</span>
-                    <div class="section-controls">
-                        <button class="duplicate-btn" title="Duplicar Sección">📄</button>
-                        <button class="delete-btn" title="Eliminar Sección">🗑️</button>
-                    </div>
-                </div>
-                <div class="track" data-track-id="1"></div>
-                <div class="track" data-track-id="2"></div>
-                <div class="track" data-track-id="3"></div>
-            `;
-            arrangementView.appendChild(sectionEl);
+            sectionEl.innerHTML = `<div class="section-header"><span class="section-name">${name}</span><div class="section-controls"><button class="duplicate-btn" title="Duplicar Sección">📄</button><button class="delete-btn" title="Eliminar Sección">🗑️</button></div></div><div class="track" data-track-id="1"></div><div class="track" data-track-id="2"></div><div class="track" data-track-id="3"></div>`;
+            
+            if (afterElement) afterElement.after(sectionEl);
+            else arrangementView.appendChild(sectionEl);
 
             sectionEl.querySelector('.delete-btn').addEventListener('click', () => deleteSection(sectionId));
             sectionEl.querySelector('.duplicate-btn').addEventListener('click', () => duplicateSection(sectionId));
+            return sectionEl;
         }
         
         function deleteSection(sectionId) {
@@ -178,26 +131,26 @@
 
         function duplicateSection(sectionId) {
             const originalSection = document.getElementById(sectionId);
-            const newSection = originalSection.cloneNode(true); // Clonar con hijos
+            const newSectionEl = addSection(originalSection.dataset.name, parseInt(originalSection.dataset.beats), originalSection);
             
-            sectionIdCounter++;
-            const newSectionId = `section-${sectionIdCounter}`;
-            newSection.id = newSectionId;
-            
-            // Re-asignar IDs y eventos a los clones
-            newSection.querySelector('.delete-btn').addEventListener('click', () => deleteSection(newSectionId));
-            newSection.querySelector('.duplicate-btn').addEventListener('click', () => duplicateSection(newSectionId));
-            
-            originalSection.after(newSection);
+            originalSection.querySelectorAll('.clip').forEach(originalClip => {
+                const originalClipData = audioData.clips[originalClip.id];
+                const targetTrack = newSectionEl.querySelector(`.track[data-track-id="${originalClip.parentElement.dataset.trackId}"]`);
+                if(originalClipData && targetTrack) {
+                    createClip(originalClipData, targetTrack, originalClipData.startBeatInTrack);
+                }
+            });
             recalculateAllSchedules();
         }
 
         addSectionBtn.addEventListener('click', () => {
             const name = prompt("Nombre de la nueva sección:", "Coro 2");
-            if (name) addSection(name);
+            if (name) {
+                addSection(name);
+                recalculateAllSchedules();
+            }
         });
 
-        // --- CONTROLES DE TRANSPORTE ---
         playButton.addEventListener('click', () => {
             isPlaying = !isPlaying;
             playButton.textContent = isPlaying ? '■' : '▶';
@@ -210,16 +163,16 @@
         });
 
         bpmInput.addEventListener('change', e => { Tone.Transport.bpm.value = parseInt(e.target.value); });
-        timeSignatureSelect.addEventListener('change', updateTimeSignature);
-        function updateTimeSignature() {
-            Tone.Transport.timeSignature = parseInt(timeSignatureSelect.value);
-        }
+        timeSignatureSelect.addEventListener('change', () => {
+            updateTimeSignature();
+            recalculateAllSchedules();
+        });
+        function updateTimeSignature() { Tone.Transport.timeSignature = parseInt(timeSignatureSelect.value); }
 
         function onBeat(time) {
             if (isClickEnabled) {
-                const beat = Tone.Transport.getTicksAtTime(time) / Tone.Transport.PPQ % Tone.Transport.timeSignature;
-                if (beat === 0) highClick.triggerAttackRelease('C5', '8n', time);
-                else lowClick.triggerAttackRelease('C4', '8n', time);
+                const beat = Math.floor(Tone.Transport.getTicksAtTime(time) / Tone.Transport.PPQ) % Tone.Transport.timeSignature;
+                if (beat === 0) highClick.triggerAttackRelease('C5', '8n', time); else lowClick.triggerAttackRelease('C4', '8n', time);
             }
         }
         
@@ -232,37 +185,24 @@
             requestAnimationFrame(updateUI);
         }
 
-        // --- DRAG & DROP Y GESTIÓN DE CLIPS ---
         loopList.addEventListener('click', e => {
-            if (e.target.classList.contains('draggable-item')) {
-                previewPlayer.load(e.target.dataset.src).then(() => previewPlayer.start());
-            }
+            if (e.target.classList.contains('draggable-item')) previewPlayer.load(e.target.dataset.src).then(() => previewPlayer.start());
         });
         document.body.addEventListener('dragstart', e => { draggedElement = e.target; });
-
-        arrangementView.addEventListener('dragover', e => {
-            e.preventDefault();
-            const targetTrack = e.target.closest('.track');
-            if(targetTrack) {
-                document.querySelectorAll('.track.drag-over').forEach(t => t.classList.remove('drag-over'));
-                targetTrack.classList.add('drag-over');
-            }
-        });
+        arrangementView.addEventListener('dragover', e => { e.preventDefault(); const track = e.target.closest('.track'); if(track) { document.querySelectorAll('.track.drag-over').forEach(t => t.classList.remove('drag-over')); track.classList.add('drag-over'); } });
         
         arrangementView.addEventListener('drop', e => {
             e.preventDefault();
             const targetTrack = e.target.closest('.track');
             if (!draggedElement || !targetTrack) return;
-            
             targetTrack.classList.remove('drag-over');
             const beatInTrack = Math.floor((e.clientX - targetTrack.getBoundingClientRect().left) / pixelsPerBeat);
-            
             createClip(draggedElement, targetTrack, beatInTrack);
             recalculateAllSchedules();
         });
 
         function createClip(sourceItem, targetTrack, startBeatInTrack) {
-            const clipId = `clip-${Date.now()}`;
+            const clipId = `clip-${Date.now()}-${Math.random()}`;
             const clipElement = document.createElement('div');
             clipElement.id = clipId;
             clipElement.className = 'clip';
@@ -270,53 +210,51 @@
             clipElement.style.left = `${startBeatInTrack * pixelsPerBeat}px`;
             clipElement.textContent = sourceItem.dataset.name;
             clipElement.classList.add(sourceItem.classList.contains('loop-item') ? 'loop-clip' : 'sample-clip');
-            
             targetTrack.appendChild(clipElement);
             
             audioData.clips[clipId] = {
-                element: clipElement,
-                src: sourceItem.dataset.src,
-                startBeatInTrack,
-                track: targetTrack,
+                element: clipElement, src: sourceItem.dataset.src, startBeatInTrack,
+                track: targetTrack, scheduleEvent: null,
             };
-            
+
             clipElement.addEventListener('dblclick', () => {
+                const clipData = audioData.clips[clipId];
+                if (clipData?.scheduleEvent) clipData.scheduleEvent.dispose();
                 delete audioData.clips[clipId];
                 clipElement.remove();
-                recalculateAllSchedules();
             });
         }
         
         function recalculateAllSchedules() {
-            // 1. Limpiar todo el transporte
+            Object.values(audioData.clips).forEach(clip => clip.scheduleEvent?.dispose());
             Tone.Transport.cancel(0);
-            Tone.Transport.scheduleRepeat(onBeat, '4n'); // Re-programar el metrónomo
+            Tone.Transport.scheduleRepeat(onBeat, '4n');
 
-            // 2. Limpiar players antiguos
-            Object.values(audioData.players).forEach(p => p.dispose());
-            audioData.players = {};
+            const sources = [...new Set(Object.values(audioData.clips).map(c => c.src))];
+            sources.forEach(src => {
+                if (!audioData.players[src]) audioData.players[src] = new Tone.Player(src).toDestination();
+            });
 
-            // 3. Recalcular y re-programar cada clip
             let totalBeatsOffset = 0;
             document.querySelectorAll('.section').forEach(sectionEl => {
                 const sectionBeats = parseInt(sectionEl.dataset.beats);
                 sectionEl.querySelectorAll('.clip').forEach(clipEl => {
                     const clipId = clipEl.id;
                     const clipInfo = audioData.clips[clipId];
-                    if (!clipInfo) return;
+                    const player = audioData.players[clipInfo.src];
 
+                    if (!player || !player.loaded) return;
+                    
                     const clipStartBeat = totalBeatsOffset + clipInfo.startBeatInTrack;
-                    const bar = Math.floor(clipStartBeat / Tone.Transport.timeSignature);
-                    const beat = clipStartBeat % Tone.Transport.timeSignature;
-                    const startTime = `${bar}:${beat}:0`;
+                    const startTime = Tone.Time(`${clipStartBeat} * 4n`);
                     
-                    const player = new Tone.Player(clipInfo.src, () => {
-                         const durationBeats = player.buffer.duration / Tone.Time('4n').toSeconds();
-                         clipInfo.element.style.width = `${durationBeats * pixelsPerBeat}px`;
-                    }).toDestination();
-                    
-                    audioData.players[clipId] = player;
+                    player.load(clipInfo.src).then(() => {
+                        const durationBeats = player.buffer.duration / Tone.Time('4n').toSeconds();
+                        clipInfo.element.style.width = `${durationBeats * pixelsPerBeat}px`;
+                    });
+
                     const loop = new Tone.Loop(time => player.start(time), player.buffer.duration).start(startTime);
+                    clipInfo.scheduleEvent = loop;
                 });
                 totalBeatsOffset += sectionBeats;
             });
