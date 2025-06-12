@@ -3,27 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DAW Minimalista</title>
-    <link rel="stylesheet" href="style.css">
+    <title>DAW Funcional</title>
     <!-- Incluimos la librería Tone.js desde un CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    
+    <!-- ================== CÓDIGO CSS VA AQUÍ ================== -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        :root {
+            --color-background: #1a1a1a;
+            --color-grid: #333;
+            --color-text: #ffffff;
+            --color-magenta: #e60073;
+            --color-purple: #7a3d99;
+            --color-green: #00b359;
+            --color-orange: #ff8c00;
+        }
+        body { background-color: var(--color-background); color: var(--color-text); font-family: 'Inter', sans-serif; margin: 0; overflow: hidden; }
+        #app-container { display: flex; flex-direction: column; height: 100vh; }
+        header { text-align: center; padding: 1rem; font-size: 1.5rem; letter-spacing: 5px; border-bottom: 1px solid var(--color-grid); }
+        .daw-layout { display: grid; grid-template-columns: 250px 1fr 250px; flex-grow: 1; gap: 1rem; padding: 1rem; height: calc(100% - 80px); }
+        aside { border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; }
+        #loops-panel { background-color: var(--color-magenta); }
+        #samples-panel { background-color: var(--color-purple); }
+        aside h2 { margin: 0 0 1rem 0; text-align: center; }
+        .bpm-display { background-color: rgba(0, 0, 0, 0.5); padding: 0.5rem 1rem; border-radius: 20px; margin-bottom: 1rem; text-align: center; }
+        #bpm-input { width: 50px; background: transparent; border: none; color: var(--color-text); font-size: 1.2rem; font-weight: bold; text-align: right; }
+        #bpm-input::-webkit-outer-spin-button, #bpm-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        #bpm-input[type=number] { -moz-appearance: textfield; }
+        .item-list { flex-grow: 1; overflow-y: auto; }
+        .draggable-item { background-color: rgba(255, 255, 255, 0.2); padding: 0.8rem; margin-bottom: 0.5rem; border-radius: 8px; cursor: grab; transition: background-color 0.2s ease; }
+        .draggable-item:hover { background-color: rgba(255, 255, 255, 0.4); }
+        #main-workspace { display: flex; flex-direction: column; gap: 1rem; background-color: #000; background-image: linear-gradient(var(--color-grid) 1px, transparent 1px), linear-gradient(90deg, var(--color-grid) 1px, transparent 1px); background-size: 50px 50px; border-radius: 12px; padding: 1rem; }
+        #song-structure { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .structure-tag { background-color: #444; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; cursor: pointer; }
+        .structure-tag:hover { background-color: #666; }
+        #timeline { flex-grow: 1; display: flex; flex-direction: column; gap: 0.5rem; overflow: auto; }
+        .track { background-color: rgba(255, 255, 255, 0.05); border-radius: 8px; min-height: 80px; padding: 0.5rem; position: relative; display: flex; align-items: center; }
+        .track.drag-over { background-color: rgba(255, 255, 255, 0.15); border: 2px dashed var(--color-green); }
+        .clip { position: absolute; height: 60px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; padding: 0 1rem; box-sizing: border-box; color: white; font-weight: bold; cursor: move; background-image: linear-gradient(rgba(255, 255, 255, 0.3) 50%, transparent 50%); background-size: 100% 10px; z-index: 10; }
+        .clip.loop-clip { background-color: var(--color-green); }
+        .clip.sample-clip { background-color: var(--color-orange); }
+        .clip-repeat-input { width: 40px; background: rgba(0, 0, 0, 0.5); color: white; border: 1px solid #fff; border-radius: 4px; text-align: center; font-weight: bold; }
+        #transport-controls { display: flex; justify-content: center; align-items: center; gap: 1.5rem; padding: 0.5rem; background: #222; border-radius: 8px; }
+        #play-button, #export-button { background-color: var(--color-magenta); border: none; color: white; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; transition: background-color 0.2s; }
+        #play-button:hover, #export-button:hover { background-color: #ff1a8c; }
+        #export-button { width: auto; height: auto; font-size: 1rem; padding: 0.5rem 1rem; border-radius: 20px; background-color: #555; }
+        #metronome { width: 30px; height: 30px; background-color: #444; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+        #metro-light { width: 15px; height: 15px; background-color: #333; border-radius: 50%; transition: background-color 0.05s ease-out; }
+        #metro-light.active { background-color: red; }
+        #time-display { font-size: 1.2rem; font-variant-numeric: tabular-nums; }
+        #start-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        #start-button { padding: 1rem 2rem; font-size: 1.5rem; background-color: var(--color-magenta); color: white; border: none; border-radius: 8px; cursor: pointer; }
+    </style>
 </head>
 <body>
 
     <div id="app-container">
         <header>
-            <h1>NOMBRE PÁGINA</h1>
+            <h1>MI DAW MUSICAL</h1>
         </header>
 
         <main class="daw-layout">
-            <!-- Panel Izquierdo: Loops -->
             <aside id="loops-panel">
                 <h2>LOOPS</h2>
                 <div class="bpm-display">
                     <input type="number" id="bpm-input" value="120"> bpm
                 </div>
                 <div class="item-list" id="loop-list">
-                    <!-- Lista de Loops basada en tus archivos -->
+                    <!-- Lista de Loops basada en tus archivos (versión MP3) -->
                     <div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_80_Shaker 2.mp3" data-name="Shaker 2 (80bpm)">Shaker 2 (80bpm)</div>
                     <div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_90_Shaker 1.mp3" data-name="Shaker 1 (90bpm)">Shaker 1 (90bpm)</div>
                     <div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_110_Fracture.mp3" data-name="Fracture (110bpm)">Fracture (110bpm)</div>
@@ -47,44 +95,25 @@
                 </div>
             </aside>
 
-            <!-- Área Central: Workspace -->
             <section id="main-workspace">
                 <div id="song-structure">
-                    <!-- Las etiquetas de estructura de la canción -->
-                    <div class="structure-tag">intro</div>
-                    <div class="structure-tag">verso</div>
-                    <div class="structure-tag">precoro</div>
-                    <div class="structure-tag">puente</div>
-                    <div class="structure-tag">salida/final</div>
+                    <div class="structure-tag">intro</div> <div class="structure-tag">verso</div> <div class="structure-tag">precoro</div> <div class="structure-tag">puente</div> <div class="structure-tag">salida/final</div>
                 </div>
-
                 <div id="timeline">
-                    <!-- Las pistas serán los destinos para soltar los elementos -->
-                    <div class="track" id="track-1" data-track-id="1">
-                        <div class="track-label">Pista 1</div>
-                    </div>
-                    <div class="track" id="track-2" data-track-id="2">
-                        <div class="track-label">Pista 2</div>
-                    </div>
-                    <div class="track" id="track-3" data-track-id="3">
-                        <div class="track-label">Pista 3</div>
-                    </div>
+                    <div class="track" id="track-1"></div> <div class="track" id="track-2"></div> <div class="track" id="track-3"></div>
                 </div>
-                
                 <div id="transport-controls">
                     <button id="play-button">▶</button>
-                    <div id="metronome">
-                        <div id="metro-light"></div>
-                    </div>
+                    <div id="metronome"><div id="metro-light"></div></div>
                     <div id="time-display">0:0:0</div>
-                     <button id="export-button">Exportar (WIP)</button>
+                    <button id="export-button">Exportar (WIP)</button>
                 </div>
             </section>
 
-            <!-- Panel Derecho: Samples -->
             <aside id="samples-panel">
                 <h2>SAMPLES</h2>
                 <div class="item-list" id="sample-list">
+                    <!-- Puedes añadir tus propios samples aquí también, siguiendo el mismo formato -->
                     <div class="draggable-item sample-item" draggable="true" data-src="https://tonejs.github.io/audio/drum-samples/B_hihat.mp3" data-name="Hi-Hat">Hi-Hat</div>
                     <div class="draggable-item sample-item" draggable="true" data-src="https://tonejs.github.io/audio/drum-samples/C_kick.mp3" data-name="Kick">Kick</div>
                     <div class="draggable-item sample-item" draggable="true" data-src="https://tonejs.github.io/audio/drum-samples/D_snare.mp3" data-name="Snare">Snare</div>
@@ -93,11 +122,185 @@
         </main>
     </div>
     
-    <!-- Modal para iniciar el audio (requerido por los navegadores) -->
-    <div id="start-modal">
-        <button id="start-button">Iniciar DAW</button>
-    </div>
+    <div id="start-modal"><button id="start-button">Iniciar DAW</button></div>
 
-    <script src="main.js"></script>
+    <!-- ================== CÓDIGO JAVASCRIPT VA AQUÍ ================== -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const startModal = document.getElementById('start-modal');
+        const startButton = document.getElementById('start-button');
+        const playButton = document.getElementById('play-button');
+        const bpmInput = document.getElementById('bpm-input');
+        const tracks = document.querySelectorAll('.track');
+        const metroLight = document.getElementById('metro-light');
+        const timeDisplay = document.getElementById('time-display');
+
+        let isPlaying = false;
+        const audioPlayers = {};
+        let draggedElement = null;
+
+        startButton.addEventListener('click', async () => {
+            await Tone.start();
+            console.log('AudioContext iniciado.');
+            startModal.style.display = 'none';
+            initializeDAW();
+        });
+
+        function initializeDAW() {
+            Tone.Transport.bpm.value = parseInt(bpmInput.value);
+            Tone.Transport.scheduleRepeat(onBeat, '4n');
+            requestAnimationFrame(updateTimeDisplay);
+        }
+
+        playButton.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                Tone.Transport.start();
+                playButton.textContent = '■';
+            } else {
+                Tone.Transport.stop();
+                playButton.textContent = '▶';
+            }
+        });
+
+        bpmInput.addEventListener('change', (e) => {
+            const newBpm = parseInt(e.target.value);
+            if (newBpm > 20 && newBpm < 300) {
+                Tone.Transport.bpm.value = newBpm;
+            }
+        });
+
+        function onBeat(time) {
+            Tone.Draw.schedule(() => {
+                metroLight.classList.add('active');
+                setTimeout(() => metroLight.classList.remove('active'), 50);
+            }, time);
+        }
+
+        function updateTimeDisplay() {
+            if (isPlaying) {
+                timeDisplay.textContent = Tone.Transport.position.split('.')[0];
+            } else {
+                timeDisplay.textContent = "0:0:0";
+            }
+            requestAnimationFrame(updateTimeDisplay);
+        }
+
+        // --- LÓGICA DE DRAG AND DROP ---
+
+        document.body.addEventListener('dragstart', (e) => {
+            draggedElement = e.target;
+        });
+
+        tracks.forEach(track => {
+            track.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                track.classList.add('drag-over');
+            });
+            track.addEventListener('dragleave', () => track.classList.remove('drag-over'));
+            track.addEventListener('drop', (e) => {
+                e.preventDefault();
+                track.classList.remove('drag-over');
+                if (!draggedElement) return;
+
+                const trackRect = track.getBoundingClientRect();
+                const dropX = e.clientX - trackRect.left;
+                const pixelsPerBeat = 50;
+                const beat = Math.floor(dropX / pixelsPerBeat);
+                const startTime = `${Math.floor(beat / 4)}:${beat % 4}:0`;
+
+                if (draggedElement.classList.contains('clip')) {
+                    moveClip(draggedElement, dropX, startTime);
+                } 
+                else if (draggedElement.classList.contains('draggable-item')) {
+                    createClip(draggedElement, track, dropX, startTime);
+                }
+            });
+        });
+
+        function createClip(sourceItem, targetTrack, positionX, startTime) {
+            const clipId = `clip-${Date.now()}`;
+            const clipElement = document.createElement('div');
+            clipElement.id = clipId;
+            clipElement.className = 'clip';
+            clipElement.draggable = true;
+            clipElement.style.left = `${positionX}px`;
+
+            const clipName = document.createElement('span');
+            clipName.textContent = sourceItem.dataset.name;
+            clipElement.appendChild(clipName);
+
+            const isLoop = sourceItem.classList.contains('loop-item');
+            clipElement.classList.add(isLoop ? 'loop-clip' : 'sample-clip');
+
+            const audioSrc = sourceItem.dataset.src;
+            const player = new Tone.Player(audioSrc, () => {
+                scheduleAudio(clipId, player, startTime, isLoop, 4); 
+            }).toDestination();
+
+            audioPlayers[clipId] = { player, element: clipElement, schedule: null, isLoop };
+            
+            if (isLoop) {
+                const repeatInput = document.createElement('input');
+                repeatInput.type = 'number';
+                repeatInput.className = 'clip-repeat-input';
+                repeatInput.value = 4;
+                repeatInput.min = 1;
+                repeatInput.addEventListener('click', e => e.stopPropagation()); // Evita que el drag se inicie al hacer clic en el input
+                repeatInput.addEventListener('change', (e) => {
+                    const newIterations = parseInt(e.target.value);
+                    rescheduleAudio(clipId, newIterations);
+                });
+                clipElement.appendChild(repeatInput);
+            }
+            
+            targetTrack.appendChild(clipElement);
+        }
+
+        function moveClip(clipElement, newPositionX, newStartTime) {
+            const clipId = clipElement.id;
+            clipElement.style.left = `${newPositionX}px`;
+            
+            const iterations = clipElement.querySelector('.clip-repeat-input')?.value || 1;
+            rescheduleAudio(clipId, parseInt(iterations), newStartTime);
+        }
+
+        function scheduleAudio(clipId, player, startTime, isLoop, iterations) {
+            const scheduleInfo = audioPlayers[clipId]?.schedule;
+            if (scheduleInfo) {
+                if(isLoop) scheduleInfo.dispose();
+                else Tone.Transport.clear(scheduleInfo);
+            }
+
+            if (isLoop) {
+                const loop = new Tone.Loop(time => {
+                    if (player.loaded) player.start(time)
+                }, player.buffer.duration);
+                loop.iterations = iterations;
+                loop.start(startTime);
+                audioPlayers[clipId].schedule = loop;
+            } else {
+                const eventId = Tone.Transport.scheduleOnce(time => {
+                     if (player.loaded) player.start(time)
+                }, startTime);
+                audioPlayers[clipId].schedule = eventId;
+            }
+        }
+
+        function rescheduleAudio(clipId, newIterations, newStartTime) {
+            const clipData = audioPlayers[clipId];
+            if (!clipData) return;
+            
+            if (!newStartTime) {
+                const currentPositionX = parseFloat(clipData.element.style.left);
+                const pixelsPerBeat = 50;
+                const beat = Math.floor(currentPositionX / pixelsPerBeat);
+                newStartTime = `${Math.floor(beat / 4)}:${beat % 4}:0`;
+            }
+            
+            scheduleAudio(clipId, clipData.player, newStartTime, clipData.isLoop, newIterations);
+        }
+    });
+    </script>
 </body>
 </html>
