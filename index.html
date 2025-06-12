@@ -3,47 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DAW Vertical Profesional</title>
+    <title>DAW - La Fusión Final</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <style>
         :root {
             --bg-color: #121212;
             --surface-color: #1E1E1E;
             --grid-line-color: #2a2a2a;
-            --primary-color: #E60073;
-            --secondary-color: #00FF7F;
+            --primary-color: #E60073; 
+            --secondary-color: #00FF7F; 
+            --accent-orange: #FFA500;
+            --accent-purple: #9D4EDD;
             --text-color: #E0E0E0;
+            --text-dark: #121212;
             --pixels-per-beat: 40px;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', 'Roboto', sans-serif; background: var(--bg-color); color: var(--text-color); overflow: hidden; }
-        .container { display: grid; grid-template-columns: 280px 1fr; grid-template-rows: 1fr auto; height: 100vh; }
-        
-        /* --- Sidebar de Instrumentos --- */
-        .sidebar { background: var(--surface-color); padding: 20px; border-right: 1px solid var(--grid-line-color); display: flex; flex-direction: column; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg-color); color: var(--text-color); overflow: hidden; }
+
+        /* Estructura Principal (3 columnas) */
+        .container { display: grid; grid-template-columns: 280px 1fr 280px; grid-template-rows: 1fr; height: 100vh; gap: 15px; padding: 15px; }
+        .sidebar, .main-workspace { background: var(--surface-color); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); display: flex; flex-direction: column; }
         .sidebar h3 { margin-bottom: 20px; text-align: center; letter-spacing: 2px; }
         .item-list-container { overflow-y: auto; flex-grow: 1; }
-        .loop-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px; margin-bottom: 8px; background: #2a2a2a; border-radius: 8px; cursor: grab; user-select: none;}
+        .loop-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px; margin-bottom: 8px; background: #2a2a2a; border-radius: 8px; cursor: grab; user-select: none; }
         .loop-item:hover { background: #3a3a3a; }
         .item-icon { font-size: 1.2rem; }
 
-        /* --- Área Principal y Línea de Tiempo --- */
-        .main-content { display: flex; flex-direction: column; overflow: hidden; }
-        .timeline { flex-grow: 1; overflow: auto; position: relative; background-color: #181818; }
+        /* Workspace Central */
+        .main-workspace { padding: 0; }
+        .timeline { flex-grow: 1; overflow: auto; position: relative; padding: 20px; background-color: #181818; border-radius: 12px 12px 0 0;}
         #track-container { position: relative; width: max-content; min-height: 100%; }
         .track { display: flex; align-items: center; border-bottom: 1px solid var(--grid-line-color); }
-        .track-label { width: 120px; height: 80px; background: #333; display: flex; align-items: center; justify-content: center; font-weight: bold; position: sticky; left: 0; z-index: 10; border-right: 1px solid var(--grid-line-color); }
+        .track-label { width: 120px; height: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; position: sticky; left: 0; z-index: 10; border-radius: 8px; margin-right: 10px;}
+        .track-label.drums { background-color: var(--primary-color); color: var(--text-dark); }
+        .track-label.bass { background-color: var(--secondary-color); color: var(--text-dark); }
+        .track-label.synth { background-color: var(--accent-orange); color: var(--text-dark); }
+        .track-label.fx { background-color: var(--accent-purple); color: var(--text-dark); }
+        .track-label.samples { background-color: #3498DB; color: var(--text-dark); }
         .track-timeline { position: relative; height: 80px; flex-grow: 1; background-image: repeating-linear-gradient(90deg, var(--grid-line-color) 0 1px, transparent 1px 100%); background-size: calc(var(--pixels-per-beat) * 4) 100%; }
         .track-timeline.drag-over { background-color: rgba(0, 255, 127, 0.1); }
-        .clip { position: absolute; height: 70px; top: 5px; background-color: var(--secondary-color); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; color: #121212; font-weight: bold; cursor: pointer; z-index: 5; overflow: hidden; }
+        .clip { position: absolute; height: 70px; top: 5px; background-color: var(--secondary-color); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; color: var(--text-dark); font-weight: bold; cursor: pointer; z-index: 5; overflow: hidden; }
         .clip-repeats { background: rgba(0,0,0,0.3); color: white; padding: 2px 6px; border-radius: 10px; font-size: 12px;}
-        #playhead { position: absolute; top: 0; left: 0; width: 2px; height: 100%; background-color: var(--primary-color); z-index: 20; pointer-events: none; }
-        .add-track-btn { margin-top: 15px; margin-left: 120px; /* Alineado con las pistas */ padding: 10px; background: #333; border: 1px dashed #555; border-radius: 8px; color: var(--text-color); cursor: pointer; text-align: center; }
+        #playhead { position: absolute; top: 0; left: 130px; /* Ancho del label + margen */ width: 2px; height: 100%; background-color: var(--primary-color); z-index: 20; pointer-events: none; }
+        .add-track-btn { margin: 15px 0 0 130px; padding: 10px; background: #333; border: 1px dashed #555; border-radius: 8px; color: var(--text-color); cursor: pointer; text-align: center; }
 
-        /* --- Barra de Transporte --- */
-        .transport-bar { background: var(--surface-color); padding: 15px; border-top: 1px solid var(--grid-line-color); display: flex; justify-content: space-between; align-items: center; }
+        /* Barra de Transporte (Integrada) */
+        .transport-bar { background: #2a2a2a; padding: 15px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; border-radius: 0 0 12px 12px;}
         .transport-group { display: flex; align-items: center; gap: 15px; }
-        .transport-bar button { background: #333; border: 1px solid #444; color: var(--text-color); width: 50px; height: 50px; border-radius: 8px; font-size: 1.5rem; cursor: pointer; }
+        .transport-bar button { background: #333; border: 1px solid #444; color: var(--text-color); width: 45px; height: 45px; border-radius: 8px; font-size: 1.5rem; cursor: pointer; }
         .transport-bar button.active { background: var(--primary-color); border-color: var(--primary-color); }
         .bpm-control, .time-display { font-size: 1.5rem; font-family: 'monospace'; }
         #bpm-input { width: 70px; background: transparent; border: none; color: var(--secondary-color); font-size: inherit; font-family: inherit; text-align: center;}
@@ -52,19 +60,15 @@
 </head>
 <body>
     <div class="container">
-        <div class="sidebar">
-            <h3>INSTRUMENTOS</h3>
-            <div class="item-list-container" id="instrument-list">
-                <!-- Instrumentos se generarán aquí -->
-            </div>
+        <div class="sidebar sidebar-left">
+            <h3>LOOPS</h3>
+            <div class="item-list-container" id="loop-list"></div>
         </div>
 
-        <div class="main-content">
+        <div class="main-workspace">
             <div class="timeline" id="timeline">
                 <div id="playhead"></div>
-                <div id="track-container">
-                    <!-- Las pistas se generan aquí -->
-                </div>
+                <div id="track-container"></div>
                 <button class="add-track-btn" id="addTrackBtn">+ Añadir Pista</button>
             </div>
             <div class="transport-bar">
@@ -81,6 +85,11 @@
                     <button id="clickBtn" title="Metrónomo">Click</button>
                 </div>
             </div>
+        </div>
+
+        <div class="sidebar sidebar-right">
+            <h3>SAMPLES</h3>
+            <div class="item-list-container" id="sample-list"></div>
         </div>
     </div>
 
@@ -104,7 +113,7 @@
         const state = { isPlaying: false, isClickEnabled: false, pixelsPerBeat: 40 };
         const data = { clips: {}, players: {} };
         let draggedData = null;
-        let totalMeasures = 32; // 32 compases iniciales
+        let totalMeasures = 32;
 
         window.onload = async () => {
             await Tone.start();
@@ -113,17 +122,9 @@
         };
 
         function initializeUI() {
-            const instrumentList = document.getElementById('instrument-list');
-            for (const key in soundLibrary) {
-                const sound = soundLibrary[key];
-                const itemEl = document.createElement('div');
-                itemEl.className = 'loop-item';
-                itemEl.draggable = true;
-                itemEl.dataset.soundId = key;
-                itemEl.innerHTML = `<span class="item-icon">${sound.type === 'drums' ? '🥁' : '🎵'}</span> ${sound.name}`;
-                instrumentList.appendChild(itemEl);
-            }
-
+            populateItemList('loop-list', 'loop');
+            populateItemList('sample-list', 'sample');
+            
             const trackContainer = document.getElementById('track-container');
             trackContainer.style.width = `${totalMeasures * 4 * state.pixelsPerBeat}px`;
             INITIAL_TRACKS.forEach(trackInfo => addTrack(trackInfo.name, trackInfo.id));
@@ -134,12 +135,28 @@
             });
         }
         
+        function populateItemList(listId, typeFilter) {
+            const container = document.getElementById(listId);
+            for (const key in soundLibrary) {
+                const sound = soundLibrary[key];
+                if ((typeFilter === 'loop' && sound.type !== 'samples') || (typeFilter === 'sample' && sound.type === 'samples')) {
+                    const itemEl = document.createElement('div');
+                    itemEl.className = 'loop-item'; // Usamos la misma clase para ambos
+                    itemEl.draggable = true;
+                    itemEl.dataset.soundId = key;
+                    itemEl.innerHTML = `<span class="item-icon">${sound.type === 'drums' ? '🥁' : '🎵'}</span> ${sound.name}`;
+                    container.appendChild(itemEl);
+                }
+            }
+            setupDragAndDrop();
+        }
+
         function addTrack(name, id) {
             const trackId = id || name.toLowerCase().replace(/\s/g, '');
             const trackContainer = document.getElementById('track-container');
             const trackEl = document.createElement('div');
             trackEl.className = 'track';
-            trackEl.innerHTML = `<div class="track-label">${name}</div><div class="track-timeline" data-track-id="${trackId}"></div>`;
+            trackEl.innerHTML = `<div class="track-label ${trackId}">${name}</div><div class="track-timeline" data-track-id="${trackId}"></div>`;
             trackContainer.appendChild(trackEl);
             setupDragAndDrop();
         }
@@ -172,9 +189,14 @@
         }
 
         function togglePlayback() {
-            state.isPlaying = !state.isPlaying;
+            if(Tone.Transport.state === 'started') {
+                Tone.Transport.pause();
+                state.isPlaying = false;
+            } else {
+                Tone.Transport.start();
+                state.isPlaying = true;
+            }
             document.getElementById('playBtn').textContent = state.isPlaying ? '⏸' : '▶';
-            if (state.isPlaying) Tone.Transport.start(); else Tone.Transport.pause();
         }
 
         function stopPlayback() {
@@ -182,12 +204,11 @@
             document.getElementById('playBtn').textContent = '▶';
             Tone.Transport.stop();
             document.getElementById('playhead').style.transform = `translateX(0px)`;
+            Tone.Transport.position = 0;
         }
 
         function restartPlayback() {
             stopPlayback();
-            Tone.Transport.position = 0;
-            // Pequeño delay para asegurar que el transporte se ha detenido antes de reiniciar
             setTimeout(() => togglePlayback(), 50);
         }
 
@@ -211,12 +232,11 @@
                     const soundId = draggedData.soundId;
                     const soundInfo = soundLibrary[soundId];
 
-                    if (soundInfo.type !== trackId && soundInfo.type !== 'sample') {
-                        alert(`No se puede colocar un loop de tipo '${soundInfo.type}' en la pista '${trackId}'.`);
-                        return;
+                    if (soundInfo.type !== trackId && soundInfo.type !== 'samples') {
+                        if(!confirm(`¿Colocar loop de tipo '${soundInfo.type}' en la pista '${trackId}'?`)) return;
                     }
                     
-                    const startX = e.clientX - timeline.getBoundingClientRect().left + timeline.parentElement.parentElement.scrollLeft;
+                    const startX = e.clientX - timeline.getBoundingClientRect().left + timeline.parentElement.parentElement.parentElement.scrollLeft;
                     const startBeat = Math.floor(startX / state.pixelsPerBeat);
                     createClip(soundId, trackId, startBeat);
                 });
@@ -248,7 +268,7 @@
         function deleteClip(clipId) {
             const clipData = data.clips[clipId];
             if (clipData) {
-                if (clipData.scheduleEvent) clipData.scheduleEvent.dispose();
+                if(clipData.scheduleEvent) clipData.scheduleEvent.dispose();
                 clipData.el.remove();
                 delete data.clips[clipId];
             }
@@ -258,7 +278,7 @@
             const clipData = data.clips[clipId];
             if (!clipData) return;
             
-            const timeSignature = 4; // Asumimos 4/4 por ahora
+            const timeSignature = 4;
             const durationBeats = clipData.repeats * timeSignature;
             
             clipData.el.style.left = `${clipData.startBeat * state.pixelsPerBeat}px`;
@@ -270,11 +290,14 @@
             const player = data.players[clipData.soundId] || new Tone.Player(soundLibrary[clipData.soundId].url).toDestination();
             data.players[clipData.soundId] = player;
             
-            const loopDuration = Tone.Time(`${durationBeats} * 4n`);
-            const startTime = Tone.Time(`${clipData.startBeat} * 4n`);
+            const loopDuration = Tone.Time(`${durationBeats}*4n`);
+            const startTime = Tone.Time(`${clipData.startBeat}*4n`);
             
             clipData.scheduleEvent = new Tone.Loop(time => {
-                if (player.loaded) player.start(time, 0, loopDuration).playbackRate = Tone.Transport.bpm.value / (soundLibrary[clipData.soundId].bpm || 120);
+                if (player.loaded) {
+                    player.playbackRate = Tone.Transport.bpm.value / (soundLibrary[clipData.soundId].bpm || 120);
+                    player.start(time, 0, loopDuration).stop(time + loopDuration.toSeconds());
+                }
             }, loopDuration).start(startTime);
         }
     </script>
