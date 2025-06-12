@@ -3,15 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DAW v3.1 - Arreglador Estable</title>
-    <!-- Tone.js -->
+    <title>DAW v4.0 - Editor Avanzado</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
-    <!-- SortableJS para arrastrar secciones -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    
     <style>
-        /* CSS completo para la nueva interfaz */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
         :root{--color-background:#1a1a1a;--color-grid:#333;--color-text:#ffffff;--color-magenta:#e60073;--color-purple:#7a3d99;--color-green:#00b359;--color-orange:#ff8c00;--pixels-per-beat:60px;}
         body{background-color:var(--color-background);color:var(--color-text);font-family:'Inter',sans-serif;margin:0;overflow:hidden;}
         #app-container{display:flex;flex-direction:column;height:100vh;}
@@ -27,7 +22,7 @@
         .draggable-item{background-color:rgba(255,255,255,0.2);padding:0.8rem;margin-bottom:0.5rem;border-radius:8px;cursor:grab;transition:background-color 0.2s ease;user-select:none;}
         .draggable-item:hover{background-color:rgba(255,255,255,0.4);}
         #main-workspace{display:flex;flex-direction:column;gap:1rem;background-color:#000;border-radius:12px;padding:1rem;overflow:hidden;}
-        #timeline-container{position:relative;flex-grow:1;overflow-x:auto;overflow-y:hidden;}
+        #timeline-container{position:relative;flex-grow:1;overflow-x:auto;overflow-y:hidden;background-color: #111;}
         #arrangement-view{display:flex;flex-direction:row;min-height:100%;width:max-content;}
         .section{border:1px solid #555;border-radius:8px;padding:0.5rem;display:flex;flex-direction:column;gap:0.5rem;background:rgba(255,255,255,0.02);margin-right:0.5rem;}
         .section-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:0.5rem;border-bottom:1px solid #444;cursor:move;}
@@ -39,6 +34,7 @@
         .clip{position:absolute;height:60px;top:10px;border-radius:8px;display:flex;align-items:center;padding:0 1rem;box-sizing:border-box;color:white;font-weight:bold;cursor:move;z-index:10;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
         .clip.loop-clip{background-color:var(--color-green);}
         .clip.sample-clip{background-color:var(--color-orange);}
+        .resize-handle{position:absolute;right:0;top:0;width:10px;height:100%;cursor:ew-resize;z-index:11;}
         #playhead{position:absolute;top:0;left:0;width:2px;height:100%;background-color:red;z-index:20;pointer-events:none;transition:transform 0.05s linear;}
         #transport-controls{display:flex;justify-content:center;align-items:center;gap:1.5rem;padding:0.5rem;background:#222;border-radius:8px;}
         #transport-controls button{border:none;color:white;height:50px;width:50px;border-radius:50%;font-size:1.5rem;cursor:pointer;transition:background-color 0.2s;}
@@ -46,62 +42,85 @@
         #add-section-btn{background-color:#555;}
         #click-toggle{background-color:#555;font-size:1rem;}
         #click-toggle.active{background-color:var(--color-orange);}
+        .zoom-control{display:flex;align-items:center;gap:0.5rem;color:#888;}
         #time-display{font-size:1.2rem;font-variant-numeric:tabular-nums;min-width:70px;}
         #start-modal{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.8);display:flex;justify-content:center;align-items:center;z-index:1000;}
         #start-button{padding:1rem 2rem;font-size:1.5rem;background-color:var(--color-magenta);color:white;border:none;border-radius:8px;cursor:pointer;}
     </style>
 </head>
 <body>
-    <div id="app-container"><header><h1>DAW v3.1</h1></header>
+    <div id="app-container"><header><h1>DAW v4.0</h1></header>
         <main class="daw-layout">
-            <aside id="loops-panel"><h2>LOOPS</h2><div class="controls-row"><div><input type="number" id="bpm-input" value="120">bpm</div><select id="time-signature"><option value="4" selected>4/4</option><option value="3">3/4</option><option value="6">6/8</option></select></div><div class="item-list" id="loop-list"><div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_120_Perc.mp3" data-name="Perc (120bpm)">Perc (120bpm)</div><div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_120_Tops.mp3" data-name="Tops (120bpm)">Tops (120bpm)</div></div></aside>
-            <section id="main-workspace"><div id="timeline-container"><div id="playhead"></div><div id="arrangement-view"></div></div><div id="transport-controls"><button id="add-section-btn" title="Añadir Sección">+</button><button id="click-toggle" title="Metrónomo">Click</button><button id="play-button" title="Reproducir/Detener">▶</button><div id="time-display">0:0:0</div></div></section>
+            <aside id="loops-panel"><h2>LOOPS</h2><div class="controls-row"><div><input type="number" id="bpm-input" value="120">bpm</div><select id="time-signature"><option value="4" selected>4/4</option><option value="3">3/4</option><option value="6">6/8</option></select></div>
+                <div class="item-list" id="loop-list">
+                    <div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_120_Perc.mp3" data-name="Perc (120bpm)">Perc (120bpm)</div>
+                    <div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_120_Tops.mp3" data-name="Tops (120bpm)">Tops (120bpm)</div>
+                    <div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_120_Latitude.mp3" data-name="Latitude (120bpm)">Latitude (120bpm)</div>
+                    <div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_110_Fracture.mp3" data-name="Fracture (110bpm)">Fracture (110bpm)</div>
+                    <div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_130_Momentum.mp3" data-name="Momentum (130bpm)">Momentum (130bpm)</div>
+                </div>
+            </aside>
+            <section id="main-workspace"><div id="timeline-container"><div id="playhead"></div><div id="arrangement-view"></div></div>
+                <div id="transport-controls">
+                    <button id="add-section-btn" title="Añadir Sección">+</button><button id="click-toggle" title="Metrónomo">Click</button><button id="play-button" title="Reproducir/Detener">▶</button>
+                    <div id="time-display">0:0:0</div>
+                    <div class="zoom-control"><span>-</span><input type="range" id="zoom-slider" min="30" max="150" value="60"><span>+</span></div>
+                </div>
+            </section>
             <aside id="samples-panel"><h2>SAMPLES</h2></aside>
         </main>
     </div>
     <div id="start-modal"><button id="start-button">Iniciar DAW</button></div>
+
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const startModal = document.getElementById('start-modal');
-        const playButton = document.getElementById('play-button');
-        const bpmInput = document.getElementById('bpm-input');
-        const timeSignatureSelect = document.getElementById('time-signature');
-        const loopList = document.getElementById('loop-list');
-        const timeDisplay = document.getElementById('time-display');
-        const clickToggleButton = document.getElementById('click-toggle');
-        const arrangementView = document.getElementById('arrangement-view');
-        const addSectionBtn = document.getElementById('add-section-btn');
-        const playhead = document.getElementById('playhead');
+        const DOM = {
+            startModal: document.getElementById('start-modal'),
+            playButton: document.getElementById('play-button'),
+            bpmInput: document.getElementById('bpm-input'),
+            timeSignatureSelect: document.getElementById('time-signature'),
+            loopList: document.getElementById('loop-list'),
+            timeDisplay: document.getElementById('time-display'),
+            clickToggleButton: document.getElementById('click-toggle'),
+            arrangementView: document.getElementById('arrangement-view'),
+            addSectionBtn: document.getElementById('add-section-btn'),
+            playhead: document.getElementById('playhead'),
+            zoomSlider: document.getElementById('zoom-slider')
+        };
 
-        let isPlaying = false;
-        let isClickEnabled = false;
-        const audioData = { clips: {}, players: {} };
+        let state = { isPlaying: false, isClickEnabled: false, pixelsPerBeat: 60 };
+        let data = { clips: {}, players: {} };
         let draggedElement = null;
-        const pixelsPerBeat = 60;
         let sectionIdCounter = 0;
 
-        const previewPlayer = new Tone.Player().toDestination();
-        const highClick = new Tone.MembraneSynth().toDestination();
-        const lowClick = new Tone.MembraneSynth({ octaves: 4 }).toDestination();
+        const audio = {
+            previewPlayer: new Tone.Player().toDestination(),
+            highClick: new Tone.MembraneSynth().toDestination(),
+            lowClick: new Tone.MembraneSynth({ octaves: 4 }).toDestination()
+        };
 
-        startModal.addEventListener('click', async () => {
+        function updateZoom() {
+            state.pixelsPerBeat = parseInt(DOM.zoomSlider.value);
+            document.documentElement.style.setProperty('--pixels-per-beat', `${state.pixelsPerBeat}px`);
+        }
+        DOM.zoomSlider.addEventListener('input', updateZoom);
+
+        DOM.startModal.addEventListener('click', async () => {
             await Tone.start();
             initializeDAW();
-            startModal.style.display = 'none';
+            DOM.startModal.style.display = 'none';
         });
 
         function initializeDAW() {
-            Tone.Transport.bpm.value = parseInt(bpmInput.value);
+            updateZoom();
+            Tone.Transport.bpm.value = parseInt(DOM.bpmInput.value);
             updateTimeSignature();
             requestAnimationFrame(updateUI);
             
-            addSection('Intro');
-            addSection('Verso');
-            addSection('Coro');
-            addSection('Outro');
+            addSection('Intro'); addSection('Verso'); addSection('Coro'); addSection('Outro');
             
-            new Sortable(arrangementView, { animation: 150, handle: '.section-header', onEnd: recalculateAllSchedules });
-            recalculateAllSchedules(); // Initial calculation
+            new Sortable(DOM.arrangementView, { animation: 150, handle: '.section-header', onEnd: recalculateAllSchedules });
+            recalculateAllSchedules();
         }
         
         function addSection(name = 'Sección', beats = 16, afterElement = null) {
@@ -110,151 +129,140 @@
             const sectionEl = document.createElement('div');
             sectionEl.className = 'section';
             sectionEl.id = sectionId;
-            sectionEl.style.width = `${beats * pixelsPerBeat}px`;
             sectionEl.dataset.beats = beats;
             sectionEl.dataset.name = name;
 
-            sectionEl.innerHTML = `<div class="section-header"><span class="section-name">${name}</span><div class="section-controls"><button class="duplicate-btn" title="Duplicar Sección">📄</button><button class="delete-btn" title="Eliminar Sección">🗑️</button></div></div><div class="track" data-track-id="1"></div><div class="track" data-track-id="2"></div><div class="track" data-track-id="3"></div>`;
+            sectionEl.innerHTML = `<div class="section-header"><span class="section-name">${name}</span><div class="section-controls"><button class="duplicate-btn" title="Duplicar">📄</button><button class="delete-btn" title="Eliminar">🗑️</button></div></div><div class="track"></div><div class="track"></div><div class="track"></div>`;
             
-            if (afterElement) afterElement.after(sectionEl);
-            else arrangementView.appendChild(sectionEl);
+            if (afterElement) afterElement.after(sectionEl); else DOM.arrangementView.appendChild(sectionEl);
 
-            sectionEl.querySelector('.delete-btn').addEventListener('click', () => deleteSection(sectionId));
-            sectionEl.querySelector('.duplicate-btn').addEventListener('click', () => duplicateSection(sectionId));
+            sectionEl.querySelector('.delete-btn').addEventListener('click', () => { sectionEl.remove(); recalculateAllSchedules(); });
+            sectionEl.querySelector('.duplicate-btn').addEventListener('click', () => duplicateSection(sectionEl));
             return sectionEl;
         }
         
-        function deleteSection(sectionId) {
-            document.getElementById(sectionId)?.remove();
-            recalculateAllSchedules();
-        }
-
-        function duplicateSection(sectionId) {
-            const originalSection = document.getElementById(sectionId);
+        function duplicateSection(originalSection) {
             const newSectionEl = addSection(originalSection.dataset.name, parseInt(originalSection.dataset.beats), originalSection);
-            
-            originalSection.querySelectorAll('.clip').forEach(originalClip => {
-                const originalClipData = audioData.clips[originalClip.id];
-                const targetTrack = newSectionEl.querySelector(`.track[data-track-id="${originalClip.parentElement.dataset.trackId}"]`);
-                if(originalClipData && targetTrack) {
-                    createClip(originalClipData, targetTrack, originalClipData.startBeatInTrack);
-                }
+            originalSection.querySelectorAll('.clip').forEach(clip => {
+                const clipData = data.clips[clip.id];
+                const newTrack = newSectionEl.querySelector(`.track:nth-child(${Array.from(clip.parentElement.parentElement.children).indexOf(clip.parentElement)})`);
+                if(clipData && newTrack) createClip(clipData, newTrack, clipData.startBeatInTrack, clipData.durationBeats);
             });
             recalculateAllSchedules();
         }
 
-        addSectionBtn.addEventListener('click', () => {
-            const name = prompt("Nombre de la nueva sección:", "Coro 2");
-            if (name) {
-                addSection(name);
-                recalculateAllSchedules();
-            }
+        DOM.addSectionBtn.addEventListener('click', () => { const name = prompt("Nombre:", "Coro 2"); if (name) { addSection(name); recalculateAllSchedules(); } });
+
+        DOM.playButton.addEventListener('click', () => {
+            state.isPlaying = !state.isPlaying;
+            DOM.playButton.textContent = state.isPlaying ? '■' : '▶';
+            if (state.isPlaying) Tone.Transport.start(); else Tone.Transport.stop();
         });
 
-        playButton.addEventListener('click', () => {
-            isPlaying = !isPlaying;
-            playButton.textContent = isPlaying ? '■' : '▶';
-            if (isPlaying) Tone.Transport.start(); else Tone.Transport.stop();
-        });
+        DOM.clickToggleButton.addEventListener('click', () => { state.isClickEnabled = !state.isClickEnabled; DOM.clickToggleButton.classList.toggle('active', state.isClickEnabled); });
 
-        clickToggleButton.addEventListener('click', () => {
-            isClickEnabled = !isClickEnabled;
-            clickToggleButton.classList.toggle('active', isClickEnabled);
-        });
-
-        bpmInput.addEventListener('change', e => { Tone.Transport.bpm.value = parseInt(e.target.value); });
-        timeSignatureSelect.addEventListener('change', () => {
-            updateTimeSignature();
-            recalculateAllSchedules();
-        });
-        function updateTimeSignature() { Tone.Transport.timeSignature = parseInt(timeSignatureSelect.value); }
+        DOM.bpmInput.addEventListener('change', e => { Tone.Transport.bpm.value = parseInt(e.target.value); });
+        DOM.timeSignatureSelect.addEventListener('change', () => { updateTimeSignature(); recalculateAllSchedules(); });
+        function updateTimeSignature() { Tone.Transport.timeSignature = parseInt(DOM.timeSignatureSelect.value); }
 
         function onBeat(time) {
-            if (isClickEnabled) {
+            if (state.isClickEnabled) {
                 const beat = Math.floor(Tone.Transport.getTicksAtTime(time) / Tone.Transport.PPQ) % Tone.Transport.timeSignature;
-                if (beat === 0) highClick.triggerAttackRelease('C5', '8n', time); else lowClick.triggerAttackRelease('C4', '8n', time);
+                if (beat === 0) audio.highClick.triggerAttackRelease('C5', '8n', time); else audio.lowClick.triggerAttackRelease('C4', '8n', time);
             }
         }
         
         function updateUI() {
-            if (isPlaying) {
-                timeDisplay.textContent = Tone.Transport.position.split('.')[0];
+            if (state.isPlaying) {
+                DOM.timeDisplay.textContent = Tone.Transport.position.split('.')[0];
                 const totalBeats = Tone.Transport.ticks / Tone.Transport.PPQ;
-                playhead.style.transform = `translateX(${totalBeats * pixelsPerBeat}px)`;
+                DOM.playhead.style.transform = `translateX(${totalBeats * state.pixelsPerBeat}px)`;
             }
             requestAnimationFrame(updateUI);
         }
 
-        loopList.addEventListener('click', e => {
-            if (e.target.classList.contains('draggable-item')) previewPlayer.load(e.target.dataset.src).then(() => previewPlayer.start());
-        });
+        DOM.loopList.addEventListener('click', e => { if (e.target.classList.contains('draggable-item')) audio.previewPlayer.load(e.target.dataset.src).then(() => audio.previewPlayer.start()); });
         document.body.addEventListener('dragstart', e => { draggedElement = e.target; });
-        arrangementView.addEventListener('dragover', e => { e.preventDefault(); const track = e.target.closest('.track'); if(track) { document.querySelectorAll('.track.drag-over').forEach(t => t.classList.remove('drag-over')); track.classList.add('drag-over'); } });
+        DOM.arrangementView.addEventListener('dragover', e => { e.preventDefault(); const track = e.target.closest('.track'); if(track) { document.querySelectorAll('.track.drag-over').forEach(t => t.classList.remove('drag-over')); track.classList.add('drag-over'); } });
         
-        arrangementView.addEventListener('drop', e => {
+        DOM.arrangementView.addEventListener('drop', e => {
             e.preventDefault();
             const targetTrack = e.target.closest('.track');
             if (!draggedElement || !targetTrack) return;
             targetTrack.classList.remove('drag-over');
-            const beatInTrack = Math.floor((e.clientX - targetTrack.getBoundingClientRect().left) / pixelsPerBeat);
+            const beatInTrack = Math.floor((e.clientX - targetTrack.getBoundingClientRect().left) / state.pixelsPerBeat);
+            
             createClip(draggedElement, targetTrack, beatInTrack);
             recalculateAllSchedules();
         });
 
-        function createClip(sourceItem, targetTrack, startBeatInTrack) {
+        function createClip(sourceItem, targetTrack, startBeatInTrack, durationBeats = 8) {
             const clipId = `clip-${Date.now()}-${Math.random()}`;
-            const clipElement = document.createElement('div');
-            clipElement.id = clipId;
-            clipElement.className = 'clip';
-            clipElement.draggable = true;
-            clipElement.style.left = `${startBeatInTrack * pixelsPerBeat}px`;
-            clipElement.textContent = sourceItem.dataset.name;
-            clipElement.classList.add(sourceItem.classList.contains('loop-item') ? 'loop-clip' : 'sample-clip');
-            targetTrack.appendChild(clipElement);
+            const clipEl = document.createElement('div');
+            clipEl.id = clipId;
+            clipEl.className = 'clip';
+            clipEl.draggable = true;
+            clipEl.textContent = sourceItem.dataset.name;
+            clipEl.classList.add(sourceItem.classList.contains('loop-item') ? 'loop-clip' : 'sample-clip');
+            clipEl.innerHTML += '<div class="resize-handle"></div>';
+            targetTrack.appendChild(clipEl);
             
-            audioData.clips[clipId] = {
-                element: clipElement, src: sourceItem.dataset.src, startBeatInTrack,
-                track: targetTrack, scheduleEvent: null,
-            };
+            data.clips[clipId] = { element: clipEl, src: sourceItem.dataset.src, startBeatInTrack, durationBeats, track: targetTrack, scheduleEvent: null };
 
-            clipElement.addEventListener('dblclick', () => {
-                const clipData = audioData.clips[clipId];
-                if (clipData?.scheduleEvent) clipData.scheduleEvent.dispose();
-                delete audioData.clips[clipId];
-                clipElement.remove();
+            clipEl.addEventListener('dblclick', () => { deleteClip(clipId); recalculateAllSchedules(); });
+            
+            const handle = clipEl.querySelector('.resize-handle');
+            handle.addEventListener('mousedown', e => {
+                e.stopPropagation();
+                const startX = e.clientX;
+                const startWidth = clipEl.offsetWidth;
+                
+                function onMouseMove(moveEvent) {
+                    const newWidth = startWidth + (moveEvent.clientX - startX);
+                    const newDurationBeats = Math.max(1, Math.round(newWidth / state.pixelsPerBeat));
+                    data.clips[clipId].durationBeats = newDurationBeats;
+                    recalculateAllSchedules(); // Live update
+                }
+                function onMouseUp() { document.removeEventListener('mousemove', onMouseMove); document.removeEventListener('mouseup', onMouseUp); }
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
             });
         }
         
-        function recalculateAllSchedules() {
-            Object.values(audioData.clips).forEach(clip => clip.scheduleEvent?.dispose());
-            Tone.Transport.cancel(0);
-            Tone.Transport.scheduleRepeat(onBeat, '4n');
+        function deleteClip(clipId) {
+            if (data.clips[clipId]?.scheduleEvent) data.clips[clipId].scheduleEvent.dispose();
+            delete data.clips[clipId];
+            document.getElementById(clipId)?.remove();
+        }
 
-            const sources = [...new Set(Object.values(audioData.clips).map(c => c.src))];
-            sources.forEach(src => {
-                if (!audioData.players[src]) audioData.players[src] = new Tone.Player(src).toDestination();
-            });
+        function recalculateAllSchedules() {
+            Object.values(data.clips).forEach(c => c.scheduleEvent?.dispose());
+            Tone.Transport.cancel(0).scheduleRepeat(onBeat, '4n');
+
+            const uniqueSources = [...new Set(Object.values(data.clips).map(c => c.src))];
+            uniqueSources.forEach(src => { if (!data.players[src]) data.players[src] = new Tone.Player(src).toDestination(); });
 
             let totalBeatsOffset = 0;
             document.querySelectorAll('.section').forEach(sectionEl => {
                 const sectionBeats = parseInt(sectionEl.dataset.beats);
                 sectionEl.querySelectorAll('.clip').forEach(clipEl => {
                     const clipId = clipEl.id;
-                    const clipInfo = audioData.clips[clipId];
-                    const player = audioData.players[clipInfo.src];
+                    const clipInfo = data.clips[clipId];
+                    if (!clipInfo) return;
+                    
+                    clipInfo.element.style.left = `${clipInfo.startBeatInTrack * state.pixelsPerBeat}px`;
+                    clipInfo.element.style.width = `${clipInfo.durationBeats * state.pixelsPerBeat}px`;
 
+                    const player = data.players[clipInfo.src];
                     if (!player || !player.loaded) return;
                     
                     const clipStartBeat = totalBeatsOffset + clipInfo.startBeatInTrack;
                     const startTime = Tone.Time(`${clipStartBeat} * 4n`);
+                    const duration = Tone.Time(`${clipInfo.durationBeats} * 4n`);
                     
-                    player.load(clipInfo.src).then(() => {
-                        const durationBeats = player.buffer.duration / Tone.Time('4n').toSeconds();
-                        clipInfo.element.style.width = `${durationBeats * pixelsPerBeat}px`;
-                    });
-
-                    const loop = new Tone.Loop(time => player.start(time), player.buffer.duration).start(startTime);
-                    clipInfo.scheduleEvent = loop;
+                    clipInfo.scheduleEvent = new Tone.Loop(time => {
+                        player.start(time, 0, duration);
+                    }, player.buffer.duration).start(startTime);
                 });
                 totalBeatsOffset += sectionBeats;
             });
