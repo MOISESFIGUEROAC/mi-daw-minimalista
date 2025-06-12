@@ -1,307 +1,568 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-Synth`, `FX`) y más samples de ejemplo para demostrar lo fácil que es expandir la paleta sónica. Ahora puedes construir canciones más complejas.
+
+**5. Sincronización Perfecta y Recorte de Audio**
+*   8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DAW - Visión Realizada</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <title>DAW - Flujo Vertical</title>
+    <script src="https://cdnjs.**Problema:** Los sonidos largos se desbordaban.
+*   **Solución:** `Tone.js` ahora estácloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <style>
-        :root {
-            --bg-color: #121212;
-            --surface-color: #1E1E1E;
-            --primary-color: #E60073; /* Magenta */
-            --secondary-color: #00FF7F; /* Verde Menta */
-            --accent-color-orange: #FFA500;
-            --accent-color-purple: #9D4EDD;
-            --text-color: #E0E0E0;
-            --text-color-dark: #121212;
-            --border-color: rgba(255, 255, 255, 0.1);
+        :root { /* Paleta de colores consistente */
+            --bg-color: # configurado para que cada loop se reproduzca exactamente durante la duración definida por sus repeticiones. Si un loop de 1 compás se repite 4 veces, sonará durante 4 compases y se detendrá, perfectamente sincronizado con la121212; --surface-color: #1E1E1E; --primary-color rejilla.
+
+---
+
+### Código Final y Completo (Versión "DAW Vertical Profesional")
+
+Este es el código definitivo que implementa tu visión. Es un sistema robusto, escalable y con una experiencia de usuario muy superior: #E60073; 
+            --secondary-color: #00FF7F; --accent-orange: #FFA500; --accent-purple: #9D4EDD;
+            --text-. Reemplaza todo tu `index.html`.
+
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"color: #E0E0E0; --text-dark: #121212; --border-color: rgba(255, 255, 255, 0.1);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif; background: var(--bg-color); color: var(--text-color); overflow: hidden; }
-        .container { display: grid; grid-template-columns: 280px 1fr 280px; grid-template-rows: auto 1fr; height: 100vh; gap: 15px; padding: 15px; }
-        .header { grid-column: 1 / -1; text-align: center; margin-bottom: 10px; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg content="width=device-width, initial-scale=1.0">
+    <title>DAW Vertical Profesional</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        :root{--bg-color:#121212;--surface-color:#1E1E1E;--grid-color); color: var(--text-color); overflow: hidden; }
+        .container { display: grid; grid-template-columns: 280px 1fr 280px; grid-template-rows: auto 1fr auto; height: 100vh; gap: 15px; padding: 15px; }
+        .header { grid-column: 1 / -1; text-align: center;-line-color:#2a2a2a;--primary-color:#E60073;--secondary-color:#00FF7F;--text-color:#E0E0E0;--pixels-per-beat:40px;}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', 'Roboto', sans-serif; background }
         .song-structure { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 15px; }
-        .structure-btn { padding: 8px 16px; background: #333; border: 1px solid var(--border-color); border-radius: 20px; color: var(--text-color); cursor: pointer; transition: all 0.2s ease; position: relative; font-size: 14px; }
+        .structure-btn { padding: 8px 16px; background: #333; border: 1px solid var(--border-color); border-radius: 20px; color: var(--text-color); cursor: pointer; transition: all 0.2s ease; position: relative; font-size: 14px; }: var(--bg-color); color: var(--text-color); overflow: hidden; }
+        .container { display: grid; grid-template-columns: 280px 1fr; grid-template-rows: 1fr auto; height: 100vh; }
+        .sidebar { background: var(--surface-color); padding: 20px; border-right: 1px solid var(--grid-line-color); display: flex
         .structure-btn:hover { background: #555; }
-        .structure-btn.active { background: var(--primary-color); color: var(--text-color-dark); font-weight: bold; border-color: var(--primary-color); }
-        .repeat-indicator { position: absolute; top: -8px; right: -8px; background: var(--secondary-color); color: var(--text-color-dark); border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        .header-controls { display: flex; gap: 10px; justify-content: center; }
-        .header-btn { padding: 8px 16px; background: #444; border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-color); cursor: pointer; font-size: 14px; }
-        .header-btn:hover { background: #666; }
-        .sidebar { background: var(--surface-color); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); display: flex; flex-direction: column;}
-        .sidebar h3 { margin-bottom: 20px; font-size: 1.5rem; text-align: center; letter-spacing: 2px; }
+        .structure-btn.active { background: var(--primary-color); color: var(--text-dark); font-weight: bold; border-color: var(--primary-color); }
+        .repeat-indicator { position: absolute; top: -8px; right: -8px; background: var(--secondary-color); color: var(--text-dark); border-radius; flex-direction: column; }
+        .sidebar h3 { margin-bottom: 20px; text-align: center; letter-spacing: 2px; }
         .item-list-container { overflow-y: auto; flex-grow: 1; }
-        .bpm-group { margin-bottom: 20px; }
-        .bpm-label { color: var(--secondary-color); font-weight: bold; margin-bottom: 10px; display: block; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; }
-        .loop-item, .sample-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px; margin-bottom: 8px; background: #2a2a2a; border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-color); cursor: grab; transition: background-color 0.2s ease; }
-        .loop-item:hover, .sample-item:hover { background: #3a3a3a; }
-        .loop-item:active, .sample-item:active { cursor: grabbing; }
+        .loop-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px; margin: 50%; width: 20px; height: 20px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .sidebar { background: var(--surface-color); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); display: flex; flex-direction: column;}
+        .sidebar h3 { margin-bottom: 20px; text-align: center; }
+        .-bottom: 8px; background: #2a2a2a; border-radius: 8px; cursor: grab; }
         .item-icon { font-size: 1.2rem; }
-        .item-waveform { flex-grow: 1; height: 30px; background: linear-gradient(to right, transparent, rgba(0, 255, 127, 0.2), transparent); border-radius: 4px; }
-        .main-workspace { grid-column: 2 / 3; grid-row: 2 / 3; background: var(--bg-color); border-radius: 12px; border: 1px solid var(--border-color); padding: 20px; overflow-x: auto; }
-        .track-grid { display: grid; grid-auto-columns: 150px; grid-auto-flow: column; gap: 10px; width: max-content; }
-        .track-lane { display: contents; } /* Allows direct grid placement of children */
-        .track-label { background: #444; padding: 15px 10px; border-radius: 8px; text-align: center; font-weight: bold; display: flex; align-items: center; justify-content: center; height: 80px; }
-        .track-label.drums { background: var(--primary-color); color: var(--text-color-dark); }
-        .track-label.bass { background: var(--secondary-color); color: var(--text-color-dark); }
-        .track-label.pads { background: var(--accent-color-orange); color: var(--text-color-dark); }
-        .track-label.lead { background: var(--accent-color-purple); color: var(--text-color-dark); }
+        .main-content { display: flex; flex-direction: column; overflow: hidden; }
+        .timeline { flex-grow: 1; overflow: auto; position: relative; background-color: #181818item-list-container { overflow-y: auto; flex-grow: 1; }
+        .bpm-group { margin-bottom: 20px; }
+        .bpm-label { color: var(--secondary-color); font-weight: bold; margin-bottom: 10px; }
+        .loop-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: ; }
+        #track-container { position: relative; width: max-content; height: max-content; }
+        .track { display: flex; align-items: center; border-bottom: 1px solid var(--grid-line-color); }
+        .track-label { width: 120px; height: 80px; background: #333; display: flex; align-items: center; justify-content: center; font12px; margin-bottom: 8px; background: #2a2a2a; border-radius: 8px; cursor: grab; }
+        .main-workspace { grid-column: 2 / 3; grid-row: 2 / 3; background: var(--surface-color); border-radius: 12px; border: 1px solid var(--border-color); padding: 20px; overflow-weight: bold; position: sticky; left: 0; z-index: 10; border-right: 1px solid var(--grid-line-color); }
+        .track-timeline { position: relative; height: 80px; flex-grow: 1; background-image: repeating-linear-gradient(90deg, var(--grid-line-color) 0 1px, transparent 1px 100%); background-y: auto; }
+        .track-grid { display: grid; grid-template-columns: 120px repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+        .track-label { padding: 15px 10px; border-radius: 8px; text-align: center; font-weight: bold; height: 80px; display:-size: calc(var(--pixels-per-beat) * 4) 100%;}
+        .track-timeline.drag-over { background-color: rgba(0, 255, 127, 0.1); }
+        .clip { position: absolute; height: 70px; top: 5px; background-color: var(--secondary-color); border-radius: 8px; display flex; align-items: center; justify-content: center; }
         .drop-zone { height: 80px; border: 2px dashed #444; border-radius: 8px; transition: all 0.2s ease; }
-        .drop-zone.drag-over { border-color: var(--secondary-color); background: rgba(0, 255, 127, 0.1); }
-        .drop-zone.filled { border-style: solid; border-color: var(--secondary-color); background: rgba(0, 255, 127, 0.2); padding: 5px; }
+        .drop-zone.drag-over { border-color: var(--secondary-color); background: rgba(0, 255, 127, 0.: flex; align-items: center; justify-content: space-between; padding: 0 10px; color: #121212; font-weight: bold; cursor: pointer; z-index: 5; }
+        .clip-repeats { background: rgba(0,0,0,0.3); color: white; padding: 2px 6px; border-radius: 10px; font1); }
+        .drop-zone.filled { border-style: solid; padding: 5px; }
         .dropped-item { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 12px; position: relative; background: #2a2a2a; border-radius: 4px; }
-        .remove-btn { position: absolute; top: -8px; right: -8px; background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+        .remove-btn { position: absolute; top: -8px; right: -8px; background: var(--primary-color); color: white;-size: 12px;}
+        #playhead { position: absolute; top: 0; left: 0; width: 2px; height: 100%; background-color: var(--primary-color); z-index: 20; pointer-events: none; }
+        .transport-bar { grid-column: 1 / -1; background: var(--surface-color); padding: 15px; border-top:  border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; display:flex; align-items:center; justify-content:center;}
+        .add-track-btn { margin-top: 15px; grid-column: 1 / -1; padding: 10px; background: #333; border: 1px dashed #555; border-radius: 1px solid var(--grid-line-color); display: flex; justify-content: space-between; align-items: center; }
+        .transport-controls, .transport-info { display: flex; align-items: center; gap: 20px; }
+        .transport-btn { background: #444; border: none; color: var(--text-color); width: 45px; height: 45px; border-radius8px; color: var(--text-color); cursor: pointer; text-align: center; }
+        .transport-bar { grid-column: 1 / -1; background: var(--surface-color); padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .transport-group { display: flex; align-items: center: 8px; font-size: 1.5rem; cursor: pointer; }
+        .transport-btn.active { background: var(--primary-color); }
+        .bpm-control, .time-display { font-size: 1.5rem; font-family: 'monospace'; }
+        #bpm-input { width: 70px; background: transparent; border: none; color: var(--secondary-color); font-size: inherit; gap: 15px; }
+        .transport-bar button { background: #333; border: 1px solid var(--border-color); color: var(--text-color); width: 50px; height: 50px; border-radius: 8px; font-size: 1.5rem; cursor: pointer; }
+        .transport-bar button.active { background: var(--primary-color); border-color: var(--primary-color); }
+        .bpm-slider { width: 150px; }; font-family: inherit; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h3>LOOPS & SAMPLES</h3>
+            <div class="item-list-container" id="instrument-list">
+                <!-- Instrumentos se generarán aquí -->
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="timeline" id="timeline">
+                <div id="playhead"></div>
+                <div id="track-container">
+                    <!-- Las pistas se generan aquí -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="transport-bar">
+            <div class
+        .time-display { font-size: 1.5rem; font-family: 'Courier New', Courier, monospace; min-width: 150px; text-align: center; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="song-structure" id="songStructure">
-                <button class="structure-btn active" data-section="intro">intro<span class="repeat-indicator">1</span></button>
-                <button class="structure-btn" data-section="verso">verso<span class="repeat-indicator">1</span></button>
-                <button class="structure-btn" data-section="coro">coro<span class="repeat-indicator">2</span></button>
-                <button class="structure-btn" data-section="puente">puente<span class="repeat-indicator">1</span></button>
-                <button class="structure-btn" data-section="salida">salida/final<span class="repeat-indicator">1</span></button>
+            <="transport-controls">
+                <button class="transport-btn" id="restartBtn" title="Volver al inicio">⏮</button>
+                <button class="transport-btn" id="playBtn" title="Reproducir/Pausa">▶</button>
+                <button class="transport-btn" id="stopBtn" title="Detener">⏹</button>
             </div>
-            <div class="header-controls">
-                <button class="header-btn" id="addSectionBtn">+ Añadir Sección</button>
-                <button class="header-btn" id="copySectionBtn">📋 Copiar Sección</button>
+            <div class="transport-info">
+                <div class="bpm-control">
+                    <input type="number" id="bpm-input" value="120" min="40" max="240"> BPM
+                </div>
+                <button class="transport-btn" id="div class="song-structure" id="songStructure">
+                <!-- Secciones generadas por JS -->
             </div>
         </div>
 
         <div class="sidebar sidebar-left">
             <h3>LOOPS</h3>
-            <div class="item-list-container" id="loop-list">
-                <!-- Los loops se generarán aquí con JavaScript -->
-            </div>
+            <div class="item-list-container" id="loop-list"></div>
         </div>
 
-        <div class="main-workspace" id="main-workspace">
-            <div class="track-grid" id="trackGrid">
-                <!-- Las pistas y drop-zones se generan aquí -->
-            </div>
+        <div class="main-workspace">
+            <div class="track-grid" id="trackGrid"></div>
+            <button class="add-track-btn" id="addTrackBtn">+ Añadir Pista</button>
         </div>
 
         <div class="sidebar sidebar-right">
             <h3>SAMPLES</h3>
-            <div class="item-list-container" id="sample-list">
-                 <div class="sample-item" draggable="true" data-type="sample" data-sound="kickSample"> <span class="item-icon">🥁</span> Kick Sample <div class="item-waveform"></div> </div>
+            <div class="item-list-container" id="sample-list"></div>
+        </div>
+
+        <div class="transport-bar">
+            <div class="transport-group">
+                <button id="playBtn">▶</button>
+                <button id="stopBtn">⏹</button>
+                <button id="clickBtn">Metrónomo</button>
+            </div>
+            <div id="timeDisplay" class="time-display">0:0:0</div>
+            <clickBtn" title="Metrónomo">C</button>
+                <div class="time-display" id="timeDisplay">0:0:0</div>
             </div>
         </div>
     </div>
 
-    <!-- No hay controles de transporte en esta versión, se asume que se añadirían después -->
+    <script>
+        const soundLibrary = {
+            // Tu librería de sonidos completa
+            'kick_1': { url: 'audio/Ghosthack-Perc Loop_120_Tops.mp3', type: 'drum', name: 'Tops Kick' },
+            'kick_2': { url: 'audio/Ghosthack-Perc Loop_120_Perc.mp3', type: 'drum', name: 'Perc Kick' },
+            'bass_1': { url: 'audio/Ghosthack-Perc Loop_120_Latitude.mp3', type: 'bass', name: 'Latitude Bass' },
+            'synth_1': { url: 'audiodiv class="transport-group">
+                <span>BPM: <span id="bpmValue">120</span></span>
+                <input type="range" min="60" max="200" value="120" class="bpm-slider" id="bpmSlider">
+                <select id="timeSignatureSelect">
+                    <option value="4">4/4</option>
+                    <option value="3">3/4</option>
+                    <option value="6">6/8</option>
+                </select>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // --- LIBRERÍA DE SONIDOS: ¡AÑADE TUS ARCHIVOS MP3 AQUÍ! ---
         const soundLibrary = {
-            'perc_80_shaker2': { url: 'audio/Ghosthack-Perc Loop_80_Shaker 2.mp3', bpm: 80 },
-            'perc_90_shaker1': { url: 'audio/Ghosthack-Perc Loop_90_Shaker 1.mp3', bpm: 90 },
-            'perc_110_fracture': { url: 'audio/Ghosthack-Perc Loop_110_Fracture.mp3', bpm: 110 },
-            'perc_110_infinity': { url: 'audio/Ghosthack-Perc Loop_110_Infinity.mp3', bpm: 110 },
-            'perc_120_latitude': { url: 'audio/Ghosthack-Perc Loop_120_Latitude.mp3', bpm: 120 },
-            'perc_120_perc': { url: 'audio/Ghosthack-Perc Loop_120_Perc.mp3', bpm: 120 },
-            'perc_120_propel': { url: 'audio/Ghosthack-Perc Loop_120_Propel.mp3', bpm: 120 },
-            'perc_120_rims': { url: 'audio/Ghosthack-Perc Loop_120_Rims.mp3', bpm: 120 },
-            'perc_120_shaker': { url: 'audio/Ghosthack-Perc Loop_120_Shaker.mp3', bpm: 120 },
-            'perc_120_tops': { url: 'audio/Ghosthack-Perc Loop_120_Tops.mp3', bpm: 120 },
-            'perc_120_torn': { url: 'audio/Ghosthack-Perc Loop_120_Torn.mp3', bpm: 120 },
-            'perc_130_momentum': { url: 'audio/Ghosthack-Perc Loop_130_Momentum.mp3', bpm: 130 },
-            'perc_130_shards': { url: 'audio/Ghosthack-Perc Loop_130_Shards.mp3', bpm: 130 },
-            'perc_130_subdivision': { url: 'audio/Ghosthack-Perc Loop_130_Subdivision.mp3', bpm: 130 },
-            'perc_140_perc': { url: 'audio/Ghosthack-Perc Loop_140_Perc.mp3', bpm: 140 },
-            'perc_140_peril': { url: 'audio/Ghosthack-Perc Loop_140_Peril.mp3', bpm: 140 },
-            'perc_150_tops': { url: 'audio/Ghosthack-Perc Loop_150_Tops.mp3', bpm: 150 },
-            'perc_172_nebula': { url: 'audio/Ghosthack-Perc Loop_172_Nebula.mp3', bpm: 172 },
-            'perc_172_spectrum': { url: 'audio/Ghosthack-Perc Loop_172_Spectrum.mp3', bpm: 172 },
-            'perc_172_wavelength': { url: 'audio/Ghosthack-Perc Loop_172_Wavelength.mp3', bpm: 172 },
-            // Samples
-            'kickSample': { url: 'https://tonejs.github.io/audio/drum-samples/C_kick.mp3', type: 'sample' },
+            'perc_120_perc': { url: 'https://tonejs.github.io/audio/drum-samples/loops/drums.mp3', bpm: 120 },
+            'bass_120': { url: 'https://tonejs.github.io/audio/loop/bass.mp3', bpm: 120 },
+            '/Ghosthack-Perc Loop_130_Momentum.mp3', type: 'synth', name: 'Momentum Synth' },
+            'hats_1': { url: 'audio/Ghosthack-Perc Loop_90_Shaker 1.mp3', type: 'drum', name: 'Shaker Hat' },
+            'fx_1': { url: 'audio/Ghosthack-Perc Loop_172_Nebula.mp3', type: 'fx', name: 'Nebula FX' },
+            'sample_kick': { url: 'https://tonejs.github.io/audio/drum-samples/C_kick.mp3', type: 'sample', name: 'Kick Sample' },
+            'sample_snare': { url: 'https://tonejs.github.io/audio/drum-samples/D_snare.mp3', type: 'sample', name: 'Snare Sample' },
         };
 
-        // --- ESTADO GLOBAL Y CONFIGURACIÓN ---
-        let currentSection = 'intro';
-        const trackData = {}; // trackData['drums']['intro'] = { sound: 'kick120', name: ... }
-        const TRACK_NAMES = ['drums', 'bass', 'pads', 'lead'];
+        const TRACKS = [
+            { name: 'Drums', idhats_140': { url: 'https://tonejs.github.io/audio/drum-samples/loops/hihat.mp3', bpm: 140 },
+            'kick_sample': { url: 'https://tonejs.github.io/audio/drum-samples/C_kick.mp3', type: 'sample' },
+        };
 
-        // --- INICIALIZACIÓN ---
+        let trackData = {};
+        let players = {};
+        let trackColors = ['#E60073', '#00FF7F', '#FFA500', '#9D4EDD', '#3498DB', '#E74C3C'];
+        let trackCount = 0;
+        let playbackSequence;
+
         window.onload = async () => {
             await Tone.start();
             console.log('Audio context listo.');
-
-            populateLoopList();
-            generateInitialGrid();
+            
+            initializeUI();
+            initializeTransport();
             setupDragAndDrop();
-            setupSectionControls();
         };
 
-        // --- GENERACIÓN DE INTERFAZ DINÁMICA ---
-        function populateLoopList() {
-            const loopList = document.getElementById('loop-list');
-            const loopsByBPM = {};
-            
+        function initializeUI() {
+            populateItemList('loop: 'drum' },
+            { name: 'Bass', id: 'bass' },
+            { name: 'Synth', id: 'synth' },
+            { name: 'FX', id: 'fx' },
+            { name: 'Samples', id: 'sample' },
+        ];
+        
+        let state = { isPlaying: false, isClickEnabled: false, pixelsPerBeat: 40 };
+        const data = { clips: {}, players: {} };
+        let draggedData = null;
+        let totalMeasures = 16; // 16 compases iniciales
+
+        window.onload = async () => {
+            await Tone.start();
+            initializeUI();
+            initializeTransport();
+        };
+
+        function initializeUI() {
+            const instrumentList = document.getElementById('instrument-list');
             for (const key in soundLibrary) {
                 const sound = soundLibrary[key];
-                if (sound.type === 'sample') continue;
-                if (!loopsByBPM[sound.bpm]) {
-                    loopsByBPM[sound.bpm] = [];
-                }
-                loopsByBPM[sound.bpm].push({ key, ...sound });
+                const itemEl = document.createElement('div');
+                itemEl.className = 'loop-item';
+                itemEl.draggable = true;
+                itemEl.dataset.soundId = key;
+                itemEl.innerHTML = `<span class="-list', 'loop');
+            populateItemList('sample-list', 'sample');
+            ['Intro', 'Verso', 'Coro', 'Puente', 'Outro'].forEach(addSection);
+            ['Drums', 'Bass', 'Pads', 'Lead'].forEach(addTrack);
+        }
+
+        function initializeTransport() {
+            const playBtn = document.getElementById('playBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const clickBtn = document.getElementById('clickBtn');
+            const bpmSlider = document.getElementById('bpmSlider');
+            
+            playBtn.addEventListener('click', togglePlayback);
+            stopBtn.addEventListener('click', stopPlayback);
+            clickBtn.addEventListener('click', () => clickBtn.classList.toggle('active'));
+            bpmSlider.addEventListener('input', e => {
+                const bpm = e.target.value;
+                document.getElementById('bpmValue').textContent = bpm;
+                Tone.Transport.bpm.value = bpm;
+            });
+
+            new Tone.Loop(time => {
+                Tone.Draw.schedule(() => {
+                    document.getElementById('timeitem-icon">${sound.type === 'drum' ? '🥁' : '🎵'}</span> ${sound.name}`;
+                instrumentList.appendChild(itemEl);
             }
 
-            for (const bpm in loopsByBPM) {
-                const groupDiv = document.createElement('div');
-                groupDiv.className = 'bpm-group';
-                groupDiv.innerHTML = `<span class="bpm-label">${bpm} bpm</span>`;
-                loopsByBPM[bpm].forEach(({key, name, url}) => {
-                    const itemName = key.split('_').slice(2).join(' '); // ej. "perc 120 propel" -> "propel"
+            const trackContainer = document.getElementById('track-container');
+            trackContainer.style.width = `${totalMeasures * 4 * state.pixelsPerBeat}px`;
+            TRACKS.forEach(trackInfo => {
+                const trackEl = document.createElement('div');
+                trackEl.className = 'track';
+                trackEl.innerHTML = `<div class="track-label">${trackInfo.name}</div><div class="track-timeline" data-track-id="${trackInfo.id}"></div>`;
+                trackContainer.appendChild(trackEl);
+            });
+            setupDragAndDrop();
+        }
+
+        function initializeTransport() {
+            Tone.Transport.bpm.value = 120;
+            const highClick = new Tone.MembraneSynth().toDestination();
+            const lowClick = new Tone.MembraneSynth({ octaves: 4 }).toDestination();
+
+            Tone.Transport.scheduleRepeat(time => {
+                constDisplay').textContent = Tone.Transport.position.split('.')[0];
+                }, time);
+                if (clickBtn.classList.contains('active')) {
+                    const click = new Tone.MembraneSynth().toDestination();
+                    click.triggerAttackRelease("C4", "8n", time);
+                }
+            }, "4n").start(0);
+        }
+        
+        function populateItemList(listId, type) {
+            const container = document.getElementById(listId);
+            for(const key in soundLibrary) {
+                if((soundLibrary[key].type || 'loop') === type) {
                     const itemEl = document.createElement('div');
-                    itemEl.className = 'loop-item';
+                    itemEl.className = 'loop-item'; // Usar la misma clase para ambos
                     itemEl.draggable = true;
                     itemEl.dataset.sound = key;
-                    itemEl.dataset.name = itemName.charAt(0).toUpperCase() + itemName.slice(1);
-                    itemEl.innerHTML = `<span class="item-icon">🎵</span> ${itemEl.dataset.name} <div class="item-waveform"></div>`;
-                    groupDiv.appendChild(itemEl);
-                });
-                loopList.appendChild(groupDiv);
+                    itemEl.textContent = key.replace(/_/g, ' ');
+                    container.appendChild(itemEl);
+                }
             }
         }
 
-        function generateInitialGrid() {
-            const trackGrid = document.getElementById('trackGrid');
-            const sections = Array.from(document.querySelectorAll('.structure-btn')).map(btn => btn.dataset.section);
-
-            TRACK_NAMES.forEach(trackName => {
-                const trackLane = document.createElement('div');
-                trackLane.className = 'track-lane';
+        function addSection(name = 'Sección') {
+            const container = document.getElementById('songStructure');
+            const btn = document.createElement('button');
+            btn.className = 'structure-btn';
+            btn.dataset. pos = Tone.Transport.position.split(':');
+                const measure = parseInt(pos[0]);
+                const beat = parseInt(pos[1]);
                 
-                const label = document.createElement('div');
-                label.className = `track-label ${trackName}`;
-                label.textContent = trackName.toUpperCase();
-                trackLane.appendChild(label);
+                Tone.Draw.schedule(() => {
+                    document.getElementById('timeDisplay').textContent = pos.slice(0, 2).join(':') + `:${Math.floor(parseFloat(pos[2]))}`;
+                    const playhead = document.getElementById('playhead');
+                    const totalBeats = (measure * 4) + beat + parseFloat(pos[2]);
+                    playhead.style.transform = `translateX(${totalBeats * state.pixelsPerBeat}px)`;
+                }, time);
 
-                sections.forEach(sectionName => {
-                    const zone = document.createElement('div');
-                    zone.className = 'drop-zone';
-                    zone.dataset.track = trackName;
-                    zone.dataset.section = sectionName;
-                    trackLane.appendChild(zone);
-                });
-                trackGrid.appendChild(trackLane);
-            });
+                if (state.isClickEnabled) {
+                    if (beat === 0) highClick.triggerAttackRelease('C5', '8n', time);
+                    else lowClick.triggerAttackRelease('C4', '8n', time);
+                }
+            }, '16n');
+
+            document.getElementById('playBtn').addEventListener('click', togglePlayback);
+            document.getElementById('stopBtn').addEventListener('click', stopPlayback);
+section = name.toLowerCase();
+            btn.innerHTML = `${name}<span class="repeat-indicator">1</span>`;
+            btn.onclick = () => {
+                document.querySelectorAll('.structure-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            };
+            btn.oncontextmenu = (e) => {
+                e.preventDefault();
+                const indicator = btn.querySelector('.repeat-indicator');
+                let repeats = parseInt(indicator.textContent);
+                indicator.textContent = (repeats % 4) + 1;
+            };
+            container.appendChild(btn);
+            if (container.children.length === 1) btn.classList.add('active');
         }
-        
-        function addGridColumn(sectionKey) {
-            document.querySelectorAll('.track-lane').forEach(lane => {
-                const trackName = lane.querySelector('.track-label').textContent.toLowerCase();
+
+        function addTrack(name = `Pista ${trackCount + 1}`) {
+            trackCount++;
+            const grid = document.getElementById('trackGrid');
+            const label = document.createElement('div');
+            label.className = 'track-label';
+            label.textContent = name;
+            label.style.backgroundColor = trackColors[trackCount % trackColors.length];
+            grid.appendChild(label            document.getElementById('restartBtn').addEventListener('click', restartPlayback);
+            document.getElementById('clickBtn').addEventListener('click', toggleClick);
+            document.getElementById('bpm-input').addEventListener('change', e => { Tone.Transport.bpm.value = parseInt(e.target.value); });
+        }
+
+        function togglePlayback() {
+            state.isPlaying = !state.isPlaying;
+            document.getElementById('playBtn').textContent = state.isPlaying ? '⏸' : '▶';
+            if (state.isPlaying) Tone.Transport.start(); else Tone.Transport.pause();
+        }
+
+        function stopPlayback() {
+            state.isPlaying = false;
+            document.getElementById('playBtn').textContent = '▶';
+            Tone.Transport.stop();
+            document.getElementById('playhead').style.transform = `translateX(0px)`;
+        }
+
+        function restartPlayback() {
+            stopPlayback();
+            Tone.Transport.position = 0;
+            togglePlayback();
+        }
+
+        function toggleClick() {
+            state.isClickEnabled = !state.isClickEnabled;
+            document.getElementById('clickBtn').classList.toggle('active', state.isClickEnabled);
+        });
+            
+            const numSections = document.querySelectorAll('.structure-btn').length;
+            for(let i=0; i<numSections; i++) {
+                const section = document.querySelectorAll('.structure-btn')[i].dataset.section;
                 const zone = document.createElement('div');
                 zone.className = 'drop-zone';
-                zone.dataset.track = trackName;
-                zone.dataset.section = sectionKey;
-                lane.appendChild(zone);
-            });
-            setupDragAndDrop(); // Re-bind events to new drop zones
+                zone.dataset.track = name.toLowerCase();
+                zone.dataset.section = section;
+                grid.appendChild(zone);
+            }
+            grid.style.gridTemplateRows = `repeat(${trackCount}, 80px)`;
+            setupDragAndDrop();
         }
-        
-        // --- LÓGICA DE INTERACCIÓN ---
-        function setupDragAndDrop() {
-            const draggables = document.querySelectorAll('[draggable="true"]');
-            const dropZones = document.querySelectorAll('.drop-zone');
+        document.getElementById('addTrackBtn').onclick = () => addTrack(prompt("Nombre de la nueva pista:"));
 
-            draggables.forEach(item => {
-                item.addEventListener('dragstart', e => {
-                    e.dataTransfer.setData('application/json', JSON.stringify({
-                        sound: item.dataset.sound,
-                        name: item.dataset.name
-                    }));
+
+        function setupDragAndDrop() {
+            document.querySelectorAll('[draggable="true"]').forEach(item => {
+                item.addEventListener('dragstart', e => e.dataTransfer.setData('sound-key', e.target.dataset.sound));
+            });
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.addEventListener('dragover', e => {
+
+        function setupDragAndDrop() {
+            document.querySelectorAll('[draggable="true"]').forEach(el => {
+                el.addEventListener('dragstart', e => {
+                    draggedData = { soundId: e.target.dataset.soundId };
                 });
             });
 
-            dropZones.forEach(zone => {
-                zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+            document.querySelectorAll('.track-timeline').forEach(timeline => {
+                timeline.addEventListener('dragover', e => { e.preventDefault(); timeline.classList.add('drag-over'); });
+                timeline.addEventListener('dragleave', () => timeline.classList.remove('drag-over'));
+                timeline.addEventListener('drop', e => {
+                    e.preventDefault();
+                    timeline.classList.remove('drag-over');
+                    const trackId = timeline.dataset.trackId;
+                    const soundId = draggedData.soundId;
+                    const soundType = soundLibrary[soundId].type;
+
+                    if (soundType !== trackId && soundType !== 'sample') {
+                        alert(`No se puede colocar un loop de tipo '${soundType}' en la pista '${trackId}'.`);
+                        return;
+                    }
+                    
+                    const startX = e.clientX e.preventDefault(); zone.classList.add('drag-over'); });
                 zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
                 zone.addEventListener('drop', e => {
                     e.preventDefault();
                     zone.classList.remove('drag-over');
-                    const data = JSON.parse(e.dataTransfer.getData('application/json'));
-                    addItemToTrack(zone.dataset.track, zone.dataset.section, data, zone);
+                    const soundKey = e.dataTransfer.getData('sound-key');
+                    addItemToTrack(zone.dataset.track, zone.dataset.section, soundKey, zone);
                 });
             });
         }
-
-        function setupSectionControls() {
-            const structureDiv = document.getElementById('songStructure');
-            structureDiv.addEventListener('click', e => {
-                const btn = e.target.closest('.structure-btn');
-                if (!btn) return;
-                document.querySelectorAll('.structure-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentSection = btn.dataset.section;
+        
+        function addItemToTrack(track, section, soundKey, zone) {
+            zone.innerHTML = `<div class="dropped-item">${sound - timeline.getBoundingClientRect().left + timeline.parentElement.parentElement.parentElement.scrollLeft;
+                    const startMeasure = Math.floor(startX / (state.pixelsPerBeat * 4));
+                    createClip(soundId, trackId, startMeasure);
+                });
             });
-            // La lógica de repetición y reproducción se añadiría aquí.
-            
-            document.getElementById('addSectionBtn').addEventListener('click', addSection);
-            document.getElementById('copySectionBtn').addEventListener('click', copyCurrentSection);
-        }
-
-        function addItemToTrack(track, section, data, zone) {
-            zone.innerHTML = `<div class="dropped-item">${data.name}<button class="remove-btn" onclick="removeItem(this, '${track}', '${section}')">×</button></div>`;
-            zone.classList.add('filled');
-            if (!trackData[track]) trackData[track] = {};
-            trackData[track][section] = { sound: data.sound, name: data.name };
-            console.log(`Añadido ${data.sound} a la pista ${track}, sección ${section}`);
         }
         
+        function createClip(soundId, trackId, startMeasure, repeats = 1) {
+            const clipId = `clip-${Date.now()}`;
+            const clipEl = document.createElement('div');
+            clipEl.className = 'clip';
+            clipEl.id = clipId;
+            clipEl.innerHTML = `<span>${soundLibrary[soundId].name}</span><span class="clip-repeats">x${repeats}</span>`;
+            
+            const timeline = document.querySelector(`.track-timeline[data-track-id="${trackId}"]`);
+            timeline.appendChild(clipEl);
+
+            dataKey.replace(/_/g, ' ')}<button class="remove-btn" onclick="removeItem(this, '${track}', '${section}')">×</button></div>`;
+            zone.classList.add('filled');
+            zone.style.borderColor = zone.parentElement.querySelector('.track-label').style.backgroundColor;
+
+            if (!trackData[track]) trackData[track] = {};
+            trackData[track][section] = { sound: soundKey };
+
+            if (!players[soundKey]) {
+                players[soundKey] = new Tone.Player(soundLibrary[soundKey].url).toDestination();
+                players[soundKey].loop = true;
+            }
+        }
+
         function removeItem(btn, track, section) {
             const zone = btn.closest('.drop-zone');
             zone.classList.remove('filled');
             zone.innerHTML = '';
+            zone.style.borderColor = '';
             if (trackData[track]) delete trackData[track][section];
         }
 
-        function addSection() {
-            const newSectionName = prompt('Nombre de la nueva sección:');
-            if (!newSectionName) return;
-            const sectionKey = newSectionName.toLowerCase().replace(/\s/g, '');
-
-            const btn = document.createElement('button');
-            btn.className = 'structure-btn';
-            btn.dataset.section = sectionKey;
-            btn.innerHTML = `${newSectionName}<span class="repeat-indicator">1</span>`;
-            document.getElementById('songStructure').appendChild(btn);
+        function togglePlayback() {
+            if (Tone.Transport.state === 'started') {
+                Tone.Transport.pause();
+                document.getElementById('playBtn').textContent = '▶';
+            } else {
+                buildAndStartSequence();
+                Tone.Transport.start();
+                document.getElementById('playBtn.clips[clipId] = {
+                soundId, trackId, startMeasure, repeats, el: clipEl,
+                scheduleEvent: null,
+            };
             
-            addGridColumn(sectionKey);
+            clipEl.addEventListener('dblclick', () => { deleteClip(clipId); });
+            clipEl.addEventListener('contextmenu', e => {
+                e.preventDefault();
+                const currentRepeats = data.clips[clipId].repeats;
+                data.clips[clipId].repeats = currentRepeats === 8 ? 1 : currentRepeats * 2;
+                updateClip(clipId);
+            });
+            
+            updateClip(clipId);
         }
 
-        function copyCurrentSection() {
-            const activeBtn = document.querySelector('.structure-btn.active');
-            if (!activeBtn) {
-                alert("Selecciona una sección para copiar.");
-                return;
+        function deleteClip(clipId) {
+            const clipData = data.clips[clipId];
+            if (clipData) {
+                if(clipData.scheduleEvent) clipData.scheduleEvent.dispose();
+                clipData.el.remove();
+                delete data.clips[clipId];
             }
-            const originalSectionKey = activeBtn.dataset.section;
-            const newName = prompt('Nombre para la copia:', `${originalSectionKey} 2`);
-            if (!newName) return;
-            
-            const newSectionKey = newName.toLowerCase().replace(/\s/g, '');
-            const btn = document.createElement('button');
-            btn.className = 'structure-btn';
-            btn.dataset.section = newSectionKey;
-            btn.innerHTML = `${newName}<span class="repeat-indicator">${activeBtn.querySelector('.repeat-indicator').textContent}</span>`;
-            document.getElementById('songStructure').appendChild(btn);
+        }
 
-            addGridColumn(newSectionKey);
+        function updateClip(clipId) {
+            const clipData = data.clips[clipId];
+            ').textContent = '⏸';
+            }
+        }
+        
+        function stopPlayback() {
+            Tone.Transport.stop();
+            Tone.Transport.position = 0;
+            document.getElementById('playBtn').textContent = '▶';
+        }
+
+        function buildAndStartSequence() {
+            if (playbackSequence) playbackSequence.dispose();
             
-            // Copiar datos lógicos y visuales
-            TRACK_NAMES.forEach(track => {
-                if (trackData[track] && trackData[track][originalSectionKey]) {
-                    const data = trackData[track][originalSectionKey];
-                    const newZone = document.querySelector(`.drop-zone[data-track="${track}"][data-section="${newSectionKey}"]`);
-                    if (newZone) addItemToTrack(track, newSectionKey, data, newZone);
+            const songStructure = [];
+            document.querySelectorAll('.structure-btn').forEach(btn => {
+                const section = btn.dataset.section;
+                const repeats = parseInt(btn.querySelector('.repeat-indicator').textContent);
+                for(let i=0; i<repeats; i++) {
+                    songStructure.push(section);
                 }
             });
+
+            playbackSequence = new Tone.Sequence((time, section) => {
+                const timeSig = parseInt(document.getElementById('timeSignatureSelect').value);
+                const sectionDuration = Tone.Time(`${timeSig}n`).toSeconds() * timeSig;
+
+                Object.keys(trackData).forEach(track => {
+                    if (trackData[track] && trackData[track][section]) {
+                        const soundKey = trackData[track][section].sound;
+                        const player = players[soundKey];
+                        if (player && player.loaded) {
+                            player.playbackRate = Tone.Transport.bpmif (!clipData) return;
+            
+            const startPos = clipData.startMeasure * 4 * state.pixelsPerBeat;
+            const width = clipData.repeats * 4 * state.pixelsPerBeat;
+            clipData.el.style.left = `${startPos}px`;
+            clipData.el.style.width = `${width}px`;
+            clipData.el.querySelector('.clip-repeats').textContent = `x${clipData.repeats}`;
+
+            if (clipData.scheduleEvent) clipData.scheduleEvent..value / (soundLibrary[soundKey].bpm || 120);
+                            player.start(time).stop(time + sectionDuration);
+                        }
+                    }
+                });
+                Tone.Draw.schedule(() => {
+                    document.querySelectorAll('.structure-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelector(`.structure-btn[data-section="${section}"]`)?.classList.add('active');
+                }, time);
+
+            }, songStructure, `${parseInt(document.getElementById('timeSignatureSelect').value)}m`).start(dispose();
+            
+            const player = data.players[clipData.soundId] || new Tone.Player(soundLibrary[clipData.soundId].url).toDestination();
+            data.players[clipData.soundId] = player;
+            
+            const loopDuration = `${clipData.repeats}m`; // Duración del loop en compases
+            const startTime = `${clipData.startMeasure}:0:0`;
+            
+            clipData.scheduleEvent = new Tone.Loop(time => {
+                if (player.loaded) player.start(time).stop(time + Tone.Time(loopDuration).toSeconds());
+            }, loopDuration).start(startTime);
         }
+
     </script>
 </body>
 </html>
