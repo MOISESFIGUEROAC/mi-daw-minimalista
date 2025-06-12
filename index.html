@@ -3,67 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DAW Mejorada</title>
-    <!-- Incluimos la librería Tone.js desde un CDN -->
+    <title>DAW v2.0 - Rediseño Completo</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
-    
-    <!-- ================== CÓDIGO CSS VA AQUÍ ================== -->
     <style>
+        /* CSS completo para la nueva interfaz */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
-        :root {
-            --color-background: #1a1a1a;
-            --color-grid: #333;
-            --color-text: #ffffff;
-            --color-magenta: #e60073;
-            --color-purple: #7a3d99;
-            --color-green: #00b359;
-            --color-orange: #ff8c00;
-        }
-        body { background-color: var(--color-background); color: var(--color-text); font-family: 'Inter', sans-serif; margin: 0; overflow: hidden; }
-        #app-container { display: flex; flex-direction: column; height: 100vh; }
-        header { text-align: center; padding: 1rem; font-size: 1.5rem; letter-spacing: 5px; border-bottom: 1px solid var(--color-grid); }
-        .daw-layout { display: grid; grid-template-columns: 250px 1fr 250px; flex-grow: 1; gap: 1rem; padding: 1rem; height: calc(100% - 80px); }
-        aside { border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; }
-        #loops-panel { background-color: var(--color-magenta); }
-        #samples-panel { background-color: var(--color-purple); }
-        aside h2 { margin: 0 0 1rem 0; text-align: center; }
-        .controls-row { display: flex; justify-content: space-between; align-items: center; background-color: rgba(0,0,0,0.5); padding: 0.5rem 1rem; border-radius: 20px; margin-bottom: 1rem;}
-        .bpm-display, .time-signature-display { display: flex; align-items: center; gap: 0.5rem;}
-        #bpm-input { width: 50px; background: transparent; border: none; color: var(--color-text); font-size: 1.2rem; font-weight: bold; text-align: right; }
-        #time-signature { background: transparent; border: 1px solid #777; color: white; border-radius: 4px; }
-        #bpm-input::-webkit-outer-spin-button, #bpm-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        #bpm-input[type=number] { -moz-appearance: textfield; }
-        .item-list { flex-grow: 1; overflow-y: auto; }
-        .draggable-item { background-color: rgba(255, 255, 255, 0.2); padding: 0.8rem; margin-bottom: 0.5rem; border-radius: 8px; cursor: grab; transition: background-color 0.2s ease; user-select: none;}
-        .draggable-item:hover { background-color: rgba(255, 255, 255, 0.4); }
-        #main-workspace { display: flex; flex-direction: column; gap: 1rem; background-color: #000; background-image: linear-gradient(var(--color-grid) 1px, transparent 1px), linear-gradient(90deg, var(--color-grid) 1px, transparent 1px); background-size: 50px 50px; border-radius: 12px; padding: 1rem; }
-        #timeline { flex-grow: 1; display: flex; flex-direction: column; gap: 0.5rem; overflow: auto; }
-        .track { background-color: rgba(255, 255, 255, 0.05); border-radius: 8px; min-height: 80px; padding: 0.5rem; position: relative; display: flex; align-items: center; }
-        .track.drag-over { background-color: rgba(255, 255, 255, 0.15); border: 2px dashed var(--color-green); }
-        .clip { position: absolute; height: 60px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; padding: 0 1rem; box-sizing: border-box; color: white; font-weight: bold; cursor: move; background-image: linear-gradient(rgba(255, 255, 255, 0.3) 50%, transparent 50%); background-size: 100% 10px; z-index: 10; }
-        .clip.loop-clip { background-color: var(--color-green); }
-        .clip.sample-clip { background-color: var(--color-orange); }
-        .clip-repeat-input { width: 40px; background: rgba(0, 0, 0, 0.5); color: white; border: 1px solid #fff; border-radius: 4px; text-align: center; font-weight: bold; }
-        #transport-controls { display: flex; justify-content: center; align-items: center; gap: 1.5rem; padding: 0.5rem; background: #222; border-radius: 8px; }
-        #play-button, #export-button, #click-toggle { background-color: var(--color-magenta); border: none; color: white; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; transition: background-color 0.2s; }
-        #click-toggle { background-color: #555; font-size: 1rem; content: 'Click'; }
-        #click-toggle.active { background-color: var(--color-orange); }
-        #play-button:hover, #export-button:hover { background-color: #ff1a8c; }
-        #export-button { width: auto; height: auto; font-size: 1rem; padding: 0.5rem 1rem; border-radius: 20px; background-color: #555; }
-        #metronome { width: 30px; height: 30px; background-color: #444; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
-        #metro-light { width: 15px; height: 15px; background-color: #333; border-radius: 50%; transition: background-color 0.05s ease-out; }
-        #metro-light.active { background-color: red; }
-        #time-display { font-size: 1.2rem; font-variant-numeric: tabular-nums; }
-        #start-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        #start-button { padding: 1rem 2rem; font-size: 1.5rem; background-color: var(--color-magenta); color: white; border: none; border-radius: 8px; cursor: pointer; }
+        :root{--color-background:#1a1a1a;--color-grid:#333;--color-text:#ffffff;--color-magenta:#e60073;--color-purple:#7a3d99;--color-green:#00b359;--color-orange:#ff8c00;--pixels-per-beat:60px;}
+        body{background-color:var(--color-background);color:var(--color-text);font-family:'Inter',sans-serif;margin:0;overflow:hidden;}
+        #app-container{display:flex;flex-direction:column;height:100vh;}
+        header{text-align:center;padding:1rem;font-size:1.5rem;letter-spacing:5px;border-bottom:1px solid var(--color-grid);}
+        .daw-layout{display:grid;grid-template-columns:250px 1fr 250px;flex-grow:1;gap:1rem;padding:1rem;height:calc(100% - 80px);}
+        aside{border-radius:12px;padding:1rem;display:flex;flex-direction:column;background-color:var(--color-magenta);}
+        #samples-panel{background-color:var(--color-purple);}
+        aside h2{margin:0 0 1rem 0;text-align:center;}
+        .controls-row{display:flex;justify-content:space-between;align-items:center;background-color:rgba(0,0,0,0.5);padding:0.5rem 1rem;border-radius:20px;margin-bottom:1rem;}
+        .bpm-display, .time-signature-display{display:flex;align-items:center;gap:0.5rem;}
+        #bpm-input{width:50px;background:transparent;border:none;color:var(--color-text);font-size:1.2rem;font-weight:bold;text-align:right;}
+        #time-signature{background:transparent;border:1px solid #777;color:white;border-radius:4px;}
+        #bpm-input[type=number]{-moz-appearance:textfield;}
+        .item-list{flex-grow:1;overflow-y:auto;padding-right:10px;}
+        .draggable-item{background-color:rgba(255,255,255,0.2);padding:0.8rem;margin-bottom:0.5rem;border-radius:8px;cursor:grab;transition:background-color 0.2s ease;user-select:none;}
+        .draggable-item:hover{background-color:rgba(255,255,255,0.4);}
+        #main-workspace{display:flex;flex-direction:column;gap:1rem;background-color:#000;border-radius:12px;padding:1rem;overflow:hidden;}
+        #timeline-container{position:relative;flex-grow:1;overflow-x:auto;overflow-y:hidden;}
+        #arrangement-view{display:flex;flex-direction:row;min-height:100%;}
+        .section{border:1px solid #555;border-radius:8px;padding:0.5rem;display:flex;flex-direction:column;gap:0.5rem;background:rgba(255,255,255,0.02);}
+        .section-header{text-align:center;font-weight:bold;color:#aaa;padding-bottom:0.5rem;border-bottom:1px solid #444;}
+        .track{background-color:rgba(255,255,255,0.05);border-radius:8px;height:80px;position:relative;background-image:linear-gradient(90deg,var(--color-grid) 1px,transparent 1px);background-size:var(--pixels-per-beat) 100%;}
+        .track.drag-over{border:2px dashed var(--color-green);}
+        .clip{position:absolute;height:60px;top:10px;border-radius:8px;display:flex;align-items:center;justify-content:space-between;padding:0 1rem;box-sizing:border-box;color:white;font-weight:bold;cursor:move;z-index:10;}
+        .clip.loop-clip{background-color:var(--color-green);}
+        .clip.sample-clip{background-color:var(--color-orange);}
+        .clip-repeat-input{width:40px;background:rgba(0,0,0,0.5);color:white;border:1px solid #fff;border-radius:4px;text-align:center;font-weight:bold;}
+        #playhead{position:absolute;top:0;left:0;width:2px;height:100%;background-color:red;z-index:20;pointer-events:none;}
+        #transport-controls{display:flex;justify-content:center;align-items:center;gap:1.5rem;padding:0.5rem;background:#222;border-radius:8px;}
+        #play-button, #add-section-btn, #click-toggle{border:none;color:white;height:50px;border-radius:50%;font-size:1.5rem;cursor:pointer;transition:background-color 0.2s;}
+        #play-button{width:50px;background-color:var(--color-magenta);}
+        #add-section-btn{width:50px;background-color:#555;}
+        #click-toggle{width:50px;background-color:#555;font-size:1rem;}
+        #click-toggle.active{background-color:var(--color-orange);}
+        #time-display{font-size:1.2rem;font-variant-numeric:tabular-nums;}
+        #start-modal{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.8);display:flex;justify-content:center;align-items:center;z-index:1000;}
+        #start-button{padding:1rem 2rem;font-size:1.5rem;background-color:var(--color-magenta);color:white;border:none;border-radius:8px;cursor:pointer;}
     </style>
 </head>
 <body>
 
     <div id="app-container">
-        <header>
-            <h1>MI DAW MUSICAL</h1>
-        </header>
+        <header><h1>DAW v2.0</h1></header>
 
         <main class="daw-layout">
             <aside id="loops-panel">
@@ -71,44 +58,34 @@
                 <div class="controls-row">
                     <div class="bpm-display"><input type="number" id="bpm-input" value="120">bpm</div>
                     <div class="time-signature-display">
-                        <select id="time-signature">
-                            <option value="4/4" selected>4/4</option>
-                            <option value="3/4">3/4</option>
-                            <option value="6/8">6/8</option>
-                        </select>
+                        <select id="time-signature"><option value="4/4" selected>4/4</option><option value="3/4">3/4</option><option value="6/8">6/8</option></select>
                     </div>
                 </div>
                 <div class="item-list" id="loop-list">
-                    <!-- Lista de Loops (clic para vista previa) -->
-                    <div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_80_Shaker 2.mp3" data-name="Shaker 2 (80bpm)">Shaker 2 (80bpm)</div>
-                    <div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_90_Shaker 1.mp3" data-name="Shaker 1 (90bpm)">Shaker 1 (90bpm)</div>
-                    <div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_110_Fracture.mp3" data-name="Fracture (110bpm)">Fracture (110bpm)</div>
-                    <div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_110_Infinity.mp3" data-name="Infinity (110bpm)">Infinity (110bpm)</div>
-                    <div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_120_Latitude.mp3" data-name="Latitude (120bpm)">Latitude (120bpm)</div>
+                    <div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_120_Perc.mp3" data-name="Perc (120bpm)">Perc (120bpm)</div>
+                    <div class="draggable-item loop-item" draggable="true" data-src="audio/Ghosthack-Perc Loop_120_Tops.mp3" data-name="Tops (120bpm)">Tops (120bpm)</div>
                 </div>
             </aside>
 
             <section id="main-workspace">
-                 <div id="timeline">
-                    <div class="track" id="track-1"></div>
-                    <div class="track" id="track-2"></div>
-                    <div class="track" id="track-3"></div>
+                <div id="timeline-container">
+                    <div id="playhead"></div>
+                    <div id="arrangement-view">
+                        <!-- Las secciones se añadirán aquí dinámicamente -->
+                    </div>
                 </div>
                 <div id="transport-controls">
-                    <button id="click-toggle">Click</button>
-                    <button id="play-button">▶</button>
-                    <div id="metronome"><div id="metro-light"></div></div>
+                    <button id="add-section-btn" title="Añadir Sección">+</button>
+                    <button id="click-toggle" title="Activar/Desactivar Metrónomo">Click</button>
+                    <button id="play-button" title="Reproducir/Detener">▶</button>
                     <div id="time-display">0:0:0</div>
-                    <button id="export-button">Exportar</button>
                 </div>
             </section>
 
             <aside id="samples-panel">
                 <h2>SAMPLES</h2>
                 <div class="item-list" id="sample-list">
-                    <div class="draggable-item sample-item" draggable="true" data-src="https://tonejs.github.io/audio/drum-samples/B_hihat.mp3" data-name="Hi-Hat">Hi-Hat</div>
-                    <div class="draggable-item sample-item" draggable="true" data-src="https://tonejs.github.io/audio/drum-samples/C_kick.mp3" data-name="Kick">Kick</div>
-                    <div class="draggable-item sample-item" draggable="true" data-src="https://tonejs.github.io/audio/drum-samples/D_snare.mp3" data-name="Snare">Snare</div>
+                     <div class="draggable-item sample-item" draggable="true" data-src="https://tonejs.github.io/audio/drum-samples/C_kick.mp3" data-name="Kick">Kick</div>
                 </div>
             </aside>
         </main>
@@ -116,7 +93,6 @@
     
     <div id="start-modal"><button id="start-button">Iniciar DAW</button></div>
 
-    <!-- ================== CÓDIGO JAVASCRIPT VA AQUÍ ================== -->
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         // --- ELEMENTOS DEL DOM ---
@@ -125,52 +101,88 @@
         const playButton = document.getElementById('play-button');
         const bpmInput = document.getElementById('bpm-input');
         const timeSignatureSelect = document.getElementById('time-signature');
-        const tracks = document.querySelectorAll('.track');
         const loopList = document.getElementById('loop-list');
-        const metroLight = document.getElementById('metro-light');
         const timeDisplay = document.getElementById('time-display');
         const clickToggleButton = document.getElementById('click-toggle');
+        const arrangementView = document.getElementById('arrangement-view');
+        const addSectionBtn = document.getElementById('add-section-btn');
+        const playhead = document.getElementById('playhead');
 
-        // --- ESTADO Y CONFIGURACIÓN ---
+        // --- CONFIGURACIÓN Y ESTADO GLOBAL ---
         let isPlaying = false;
         let isClickEnabled = false;
         const audioPlayers = {};
         let draggedElement = null;
-        const pixelsPerBeat = 50; // Ancho de cada beat en la rejilla
+        const pixelsPerBeat = 60; // Aumentado para más espacio
+        let sectionCounter = 0;
+        let sections = {}; // { sectionId: { element, startBeats, totalBeats, ... } }
 
-        // --- INICIALIZACIÓN DE AUDIO ---
+        // --- INICIALIZACIÓN DE AUDIO (SYNTHS Y PLAYERS) ---
         const previewPlayer = new Tone.Player().toDestination();
         const highClick = new Tone.MembraneSynth({ pitchDecay: 0.01, octaves: 10, oscillator: { type: 'square' }, envelope: { attack: 0.001, decay: 0.3, sustain: 0.01, release: 0.2 } }).toDestination();
         const lowClick = new Tone.MembraneSynth({ pitchDecay: 0.01, octaves: 4, oscillator: { type: 'sine' }, envelope: { attack: 0.001, decay: 0.3, sustain: 0.01, release: 0.2 } }).toDestination();
 
         startButton.addEventListener('click', async () => {
             await Tone.start();
-            console.log('AudioContext iniciado.');
-            startModal.style.display = 'none';
             initializeDAW();
+            startModal.style.display = 'none';
         });
 
         function initializeDAW() {
-            // Configurar transporte con valores iniciales
             Tone.Transport.bpm.value = parseInt(bpmInput.value);
-            const [num, den] = timeSignatureSelect.value.split('/').map(Number);
-            Tone.Transport.timeSignature = [num, den];
+            updateTimeSignature();
+            Tone.Transport.scheduleRepeat(onBeat, '8n');
+            requestAnimationFrame(updateUI); // Bucle principal de actualización de UI
             
-            // Programar metrónomo visual y audible
-            Tone.Transport.scheduleRepeat(onBeat, '8n'); // Revisar cada corchea para mayor precisión
-            requestAnimationFrame(updateTimeDisplay);
+            // Crear secciones iniciales
+            addSection('Intro');
+            addSection('Verso');
+            addSection('Coro');
+            addSection('Outro');
+        }
+        
+        // --- LÓGICA DEL ARREGLADOR DE SECCIONES ---
+        function addSection(type = 'Sección') {
+            sectionCounter++;
+            const sectionId = `section-${sectionCounter}`;
+            const beatsPerSection = 16; // 4 compases de 4/4 por defecto
+
+            const sectionEl = document.createElement('div');
+            sectionEl.className = 'section';
+            sectionEl.id = sectionId;
+            sectionEl.style.width = `${beatsPerSection * pixelsPerBeat}px`;
+            sectionEl.innerHTML = `
+                <div class="section-header">${type}</div>
+                <div class="track" data-track-id="1"></div>
+                <div class="track" data-track-id="2"></div>
+                <div class="track" data-track-id="3"></div>
+            `;
+            arrangementView.appendChild(sectionEl);
+            
+            // Almacenar información de la sección
+            sections[sectionId] = {
+                element: sectionEl,
+                totalBeats: beatsPerSection,
+                startBeats: 0 // Se calculará después
+            };
+            updateSectionStartTimes();
         }
 
-        // --- CONTROLES DE TRANSPORTE ---
+        function updateSectionStartTimes() {
+            let currentBeats = 0;
+            document.querySelectorAll('.section').forEach(sectionEl => {
+                const sectionId = sectionEl.id;
+                sections[sectionId].startBeats = currentBeats;
+                currentBeats += sections[sectionId].totalBeats;
+            });
+        }
+        addSectionBtn.addEventListener('click', () => addSection());
+
+        // --- CONTROLES DE TRANSPORTE Y METRÓNOMO ---
         playButton.addEventListener('click', () => {
             isPlaying = !isPlaying;
-            if (isPlaying) {
-                Tone.Transport.start();
-                playButton.textContent = '■';
-            } else {
-                Tone.Transport.stop();
-                playButton.textContent = '▶';
-            }
+            playButton.textContent = isPlaying ? '■' : '▶';
+            if (isPlaying) Tone.Transport.start(); else Tone.Transport.stop();
         });
 
         clickToggleButton.addEventListener('click', () => {
@@ -178,79 +190,78 @@
             clickToggleButton.classList.toggle('active', isClickEnabled);
         });
 
-        bpmInput.addEventListener('change', (e) => {
-            const newBpm = parseInt(e.target.value);
-            if (newBpm > 20 && newBpm < 300) Tone.Transport.bpm.value = newBpm;
-        });
+        bpmInput.addEventListener('change', e => { Tone.Transport.bpm.value = parseInt(e.target.value); });
+        timeSignatureSelect.addEventListener('change', updateTimeSignature);
+        function updateTimeSignature() {
+            const [num] = timeSignatureSelect.value.split('/').map(Number);
+            Tone.Transport.timeSignature = num;
+        }
 
-        timeSignatureSelect.addEventListener('change', (e) => {
-            const [num, den] = e.target.value.split('/').map(Number);
-            Tone.Transport.timeSignature = [num, den];
-        });
-
-        // --- LÓGICA DEL METRÓNOMO ---
         function onBeat(time) {
             const [bar, beat, subdivision] = Tone.Transport.position.split(':').map(Number);
-            
-            // Metrónomo visual (solo en los beats)
-            if (subdivision === 0) {
-                 Tone.Draw.schedule(() => {
-                    metroLight.classList.add('active');
-                    setTimeout(() => metroLight.classList.remove('active'), 50);
-                }, time);
-            }
-           
-            // Metrónomo audible
             if (isClickEnabled && subdivision === 0) {
-                if (beat === 0) {
-                    highClick.triggerAttackRelease('C2', '8n', time);
-                } else {
-                    lowClick.triggerAttackRelease('C2', '8n', time);
-                }
+                if (beat === 0) highClick.triggerAttackRelease('C2', '8n', time);
+                else lowClick.triggerAttackRelease('C2', '8n', time);
             }
         }
         
-        function updateTimeDisplay() {
-            if (isPlaying) timeDisplay.textContent = Tone.Transport.position.split('.')[0];
-            else timeDisplay.textContent = "0:0:0";
-            requestAnimationFrame(updateTimeDisplay);
+        // --- BUCLE PRINCIPAL DE ACTUALIZACIÓN DE UI ---
+        function updateUI() {
+            if (isPlaying) {
+                timeDisplay.textContent = Tone.Transport.position.split('.')[0];
+                const totalBeats = Tone.Transport.ticks / Tone.Transport.PPQ;
+                playhead.style.transform = `translateX(${totalBeats * pixelsPerBeat}px)`;
+            }
+            requestAnimationFrame(updateUI);
         }
 
         // --- LÓGICA DE VISTA PREVIA ---
-        loopList.addEventListener('click', (e) => {
+        loopList.addEventListener('click', e => {
             if (e.target.classList.contains('draggable-item')) {
                 if (previewPlayer.state === 'started') previewPlayer.stop();
-                const audioSrc = e.target.dataset.src;
-                previewPlayer.load(audioSrc).then(() => {
-                    previewPlayer.start();
-                });
+                previewPlayer.load(e.target.dataset.src).then(() => previewPlayer.start());
             }
         });
 
-        // --- LÓGICA DE DRAG AND DROP CON "MAGNETISMO" (SNAPPING) ---
-        document.body.addEventListener('dragstart', (e) => { draggedElement = e.target; });
-        tracks.forEach(track => {
-            track.addEventListener('dragover', (e) => { e.preventDefault(); track.classList.add('drag-over'); });
-            track.addEventListener('dragleave', () => track.classList.remove('drag-over'));
-            track.addEventListener('drop', (e) => {
-                e.preventDefault();
-                track.classList.remove('drag-over');
-                if (!draggedElement) return;
+        // --- LÓGICA DE DRAG & DROP ---
+        document.body.addEventListener('dragstart', e => { draggedElement = e.target; });
+        arrangementView.addEventListener('dragover', e => {
+            e.preventDefault();
+            const targetTrack = e.target.closest('.track');
+            if (targetTrack) {
+                document.querySelectorAll('.track.drag-over').forEach(t => t.classList.remove('drag-over'));
+                targetTrack.classList.add('drag-over');
+            }
+        });
+        
+        arrangementView.addEventListener('drop', e => {
+            e.preventDefault();
+            const targetTrack = e.target.closest('.track');
+            if (!draggedElement || !targetTrack) return;
+            
+            targetTrack.classList.remove('drag-over');
+            const targetSectionEl = targetTrack.closest('.section');
+            const sectionId = targetSectionEl.id;
+            const sectionInfo = sections[sectionId];
+            
+            const trackRect = targetTrack.getBoundingClientRect();
+            const sectionRect = targetSectionEl.getBoundingClientRect();
+            const dropX = e.clientX - trackRect.left;
+            
+            const beatInTrack = Math.floor(dropX / pixelsPerBeat);
+            const snappedX = beatInTrack * pixelsPerBeat;
+            
+            const totalStartBeats = sectionInfo.startBeats + beatInTrack;
+            const bar = Math.floor(totalStartBeats / Tone.Transport.timeSignature);
+            const beat = totalStartBeats % Tone.Transport.timeSignature;
+            const startTime = `${bar}:${beat}:0`;
 
-                const trackRect = track.getBoundingClientRect();
-                const dropX = e.clientX - trackRect.left;
-                
-                // ---- ¡AQUÍ ESTÁ EL MAGNETISMO! ----
-                const beat = Math.round(dropX / pixelsPerBeat); // Redondear al beat más cercano
-                const snappedX = beat * pixelsPerBeat; // Calcular la posición visual exacta
-                const startTime = `${Math.floor(beat / 4)}:${beat % 4}:0`;
-
-                if (draggedElement.classList.contains('clip')) {
-                    moveClip(draggedElement, snappedX, startTime);
-                } else if (draggedElement.classList.contains('draggable-item')) {
-                    createClip(draggedElement, track, snappedX, startTime);
-                }
-            });
+            if (draggedElement.classList.contains('clip')) {
+                // Mover clip es más complejo en esta arquitectura, por ahora se crea uno nuevo
+                console.warn("Mover clips no está implementado en esta versión.");
+            } else if (draggedElement.classList.contains('draggable-item')) {
+                createClip(draggedElement, targetTrack, snappedX, startTime);
+            }
         });
 
         // --- FUNCIONES DE MANEJO DE CLIPS ---
@@ -261,74 +272,41 @@
             clipElement.className = 'clip';
             clipElement.draggable = true;
             clipElement.style.left = `${positionX}px`;
-
-            const clipName = document.createElement('span');
-            clipName.textContent = sourceItem.dataset.name;
-            clipElement.appendChild(clipName);
-
+            clipElement.textContent = sourceItem.dataset.name;
+            
             const isLoop = sourceItem.classList.contains('loop-item');
             clipElement.classList.add(isLoop ? 'loop-clip' : 'sample-clip');
+            
+            targetTrack.appendChild(clipElement);
 
-            const audioSrc = sourceItem.dataset.src;
-            const player = new Tone.Player(audioSrc, () => {
-                scheduleAudio(clipId, player, startTime, isLoop, 4); 
+            const player = new Tone.Player(sourceItem.dataset.src, () => {
+                const durationBeats = player.buffer.duration / Tone.Time('4n').toSeconds();
+                clipElement.style.width = `${durationBeats * pixelsPerBeat}px`;
+                scheduleAudio(clipId, player, startTime, isLoop);
             }).toDestination();
             
-            audioPlayers[clipId] = { player, element: clipElement, schedule: null, isLoop };
+            audioPlayers[clipId] = { player, element: clipElement, schedule: null };
             
-            if (isLoop) {
-                const repeatInput = document.createElement('input');
-                repeatInput.type = 'number';
-                repeatInput.className = 'clip-repeat-input';
-                repeatInput.value = 4;
-                repeatInput.min = 1;
-                repeatInput.addEventListener('click', e => e.stopPropagation());
-                repeatInput.addEventListener('change', (e) => {
-                    const newIterations = parseInt(e.target.value);
-                    rescheduleAudio(clipId, newIterations);
-                });
-                clipElement.appendChild(repeatInput);
-            }
-            targetTrack.appendChild(clipElement);
+            clipElement.addEventListener('dblclick', () => deleteClip(clipId));
         }
-
-        function moveClip(clipElement, newPositionX, newStartTime) {
-            const clipId = clipElement.id;
-            clipElement.style.left = `${newPositionX}px`;
-            const iterations = clipElement.querySelector('.clip-repeat-input')?.value || 1;
-            rescheduleAudio(clipId, parseInt(iterations), newStartTime);
-        }
-
-        function scheduleAudio(clipId, player, startTime, isLoop, iterations) {
-            const scheduleInfo = audioPlayers[clipId]?.schedule;
-            if (scheduleInfo) {
-                if(isLoop) scheduleInfo.dispose();
-                else Tone.Transport.clear(scheduleInfo);
-            }
-            if (isLoop) {
-                const loop = new Tone.Loop(time => {
-                    if (player.loaded) player.start(time)
-                }, player.buffer.duration);
-                loop.iterations = iterations;
-                loop.start(startTime);
-                audioPlayers[clipId].schedule = loop;
-            } else {
-                const eventId = Tone.Transport.scheduleOnce(time => {
-                     if (player.loaded) player.start(time)
-                }, startTime);
-                audioPlayers[clipId].schedule = eventId;
-            }
-        }
-
-        function rescheduleAudio(clipId, newIterations, newStartTime) {
+        
+        function deleteClip(clipId) {
             const clipData = audioPlayers[clipId];
             if (!clipData) return;
-            if (!newStartTime) {
-                const currentPositionX = parseFloat(clipData.element.style.left);
-                const beat = Math.round(currentPositionX / pixelsPerBeat);
-                newStartTime = `${Math.floor(beat / 4)}:${beat % 4}:0`;
-            }
-            scheduleAudio(clipId, clipData.player, newStartTime, clipData.isLoop, newIterations);
+            if (clipData.schedule) clipData.schedule.dispose();
+            clipData.player.dispose();
+            clipData.element.remove();
+            delete audioPlayers[clipId];
+        }
+
+        function scheduleAudio(clipId, player, startTime, isLoop) {
+             const loop = new Tone.Loop(time => {
+                if (player.loaded) player.start(time);
+            }, player.buffer.duration);
+            
+            if (!isLoop) loop.iterations = 1;
+            loop.start(startTime);
+            audioPlayers[clipId].schedule = loop;
         }
     });
     </script>
